@@ -30,6 +30,9 @@ move into dictionaries rather than being overwritten in place.
   relationship names (e.g. `Customer`, `orderId`, `places`) stay English. This
   is deliberate — they are domain identifiers mirrored in RDF exports.
 - Browser language auto-detection (default is unconditionally `zh-CN`).
+- Translating error messages thrown from `src/lib/*` (e.g. `github.ts`
+  "Device code expired", `shareCodec.ts` payload errors) even where they
+  surface in toasts — edge paths, accepted English for this phase.
 - Pluralization rules (Chinese has no plural morphology; simple `{var}`
   interpolation suffices).
 
@@ -41,25 +44,36 @@ move into dictionaries rather than being overwritten in place.
 src/i18n/
 ├── index.ts    # t(), useI18n(), LanguageId, helper types
 ├── en.ts       # English dictionary, `as const` — source of key types
-└── zh-CN.ts    # Chinese dictionary; Record<keyof typeof en, string> for
-                # static keys, plus extra data-driven quest/template keys
+└── zh-CN.ts    # Chinese dictionary: Partial<Record<keyof typeof en, string>>
+                # for static keys (partial = the fallback story) merged with a
+                # separate Record<string, string> of data-driven
+                # quest.*/template.* keys
 ```
 
 ### `t()` API
 
 ```ts
 type Vars = Record<string, string | number>;
-function t(key: string, vars?: Vars, fallback?: string): string;
+type StaticKey = keyof typeof en; // en.ts is `as const` — the key-type source
+
+// Overload 1 — static keys, compile-time checked (satisfies Goal 4):
+function t(key: StaticKey, vars?: Vars): string;
+// Overload 2 — data-driven keys, fallback REQUIRED:
+function t(key: string, vars: Vars | undefined, fallback: string): string;
 ```
 
 - Resolution order: `zh[key] → en[key] → fallback → key`.
   In `en` locale: `en[key] → fallback → key`.
 - `{var}` placeholder replacement only: `t('stats.entities', { count: 3 })`.
-- `fallback` exists for **data-driven keys** whose English text lives in data
-  files (quests, templates), not in `en.ts` — see below.
-- `useI18n()` hook subscribes to `appStore.language` so components re-render on
-  toggle. (Direct `t()` module import is fine for non-React modules; it reads
-  current language from the store singleton.)
+- Overload 2 serves **data-driven keys** whose English text lives in data
+  files (quests, templates), not in `en.ts` — the mandatory `fallback` is
+  what makes the untyped key safe (see below).
+- `useI18n()` returns `{ t, language, setLanguage }` and subscribes to
+  `appStore.language` so components re-render on toggle. Non-React modules
+  import `t` directly; it reads the current language from the store singleton
+  **at call time** (`useAppStore.getState().language`), never at module
+  evaluation — this keeps the import cycle
+  `appStore → questGenerator → i18n → appStore` benign.
 
 ### Language state (mirrors the theme pattern in `appStore.ts`)
 
@@ -91,22 +105,36 @@ are keyed by stable ids in `zh-CN.ts`:
 
 - `src/data/quests.ts` (5 static quests):
   `quest.<questId>.title`, `.description`, `.step.<stepId>.instruction`, `.hint`
+- **Id collision guard**: `questGenerator.ts` emits ids `quest-1`..`quest-6`
+  that collide with the static quests' `quest-1`..`quest-5`. `quest.<id>.*`
+  dictionary lookups therefore apply **only to the 5 static quests** — the
+  render site (`QuestPanel.tsx`) enforces this with a membership check against
+  the imported `quests` array before consulting the dictionary. Generated
+  quests render their already-generated strings as-is: the generator resolves
+  `questGen.*` templates once at `loadOntology` time, and toggling language
+  afterwards does not re-translate an in-flight generated quest (mixed
+  language accepted, per convention below).
 - `src/data/questGenerator.ts` (dynamically generated quests for loaded
   ontologies): the generator's instruction/hint *templates* become `t()` calls
   with keys in both dictionaries (`questGen.*`). Interpolated entity names
   remain English per Non-Goals — mixed-language sentences ("点击 Customer 实体")
   are accepted and standard for this fork.
-- `src/data/designerTemplates.ts`: `template.<id>.name` / `.description` via
-  `t(key, undefined, template.name)`. Template *contents* (entity types,
-  properties, relationships inside the template) stay English.
+- `src/data/designerTemplates.ts` (`DesignerTemplate` fields are
+  `id, label, description, icon, ontology`): `template.<id>.label` /
+  `.description` via `t(key, undefined, template.label)`. Template *contents*
+  (entity types, properties, relationships inside the template) stay English.
 
 Render sites (`QuestPanel.tsx`, designer template picker) wrap fields through
 `t()`; the `Quest` / template interfaces are unchanged.
 
 ## Testing
 
-1. **Existing tests**: `src/test/setup.ts` sets `localStorage['language']='en'`
-   before each suite so all current English-text assertions pass untouched.
+1. **Existing tests**: `src/test/setup.ts` (today just the jest-dom import)
+   gains a **top-level** `localStorage.setItem('language', 'en')` statement.
+   Top level is required: vitest `setupFiles` execute before test modules are
+   imported, so the pin precedes `getInitialLanguage()`'s module-load
+   evaluation — a `beforeEach` hook would run too late. With the pin in
+   place, all current English-text assertions pass untouched.
 2. **New unit tests** (`src/i18n/i18n.test.ts`): resolution order (zh → en →
    fallback → key), `{var}` interpolation, locale switching.
 3. **New smoke tests**: 2–3 key components (Header, QuestPanel) render Chinese
@@ -116,7 +144,9 @@ Render sites (`QuestPanel.tsx`, designer template picker) wrap fields through
 
 ## Delivery plan (incremental conventional commits on `feature/i18n-zh-cn`)
 
-1. `feat: add i18n module (t, dictionaries, appStore language state)` — infra.
+1. `feat: add i18n module (t, dictionaries, appStore language state)` — infra,
+   **including the top-level test pin** in `src/test/setup.ts` (lands before
+   any component flips to zh, keeping the suite green from step 1).
 2. `feat: localize app shell (Header, App, toggle, document.title)`.
 3. `feat: localize main-view panels (Inspector, Stats, Quest panel)`.
 4. `feat: localize modals (About, Help, ImportExport, Gallery, DataSources,
@@ -124,7 +154,7 @@ Render sites (`QuestPanel.tsx`, designer template picker) wrap fields through
 5. `feat: localize LearnPage and Designer (largest surface)`.
 6. `feat: localize quests, quest generator, designer templates (data layer)`.
 7. `feat: localize embed widget entry`.
-8. `test: pin test language to en; add i18n unit + zh smoke tests`.
+8. `test: add i18n unit + zh smoke tests` (en pin already landed in step 1).
 9. `docs: document language toggle in README`.
 
 Each step keeps the build green; final step runs full gates.
