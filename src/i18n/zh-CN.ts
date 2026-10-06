@@ -89,8 +89,12 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   'palette.theme': '切换主题',
 };
 
-// Data-driven keys (quests, designer templates). Empty until Chunk 4.
-const dataZh: Record<string, string> = {};
+// Data-driven keys (quests, designer templates).
+const dataZh: Record<string, string> = {
+  // seeded now for the guard test; remaining static-quest keys land in Chunk 4
+  'quest.quest-1.title': '认识实体',
+  'quest.quest-1.step.step-1-1.instruction': '点击 Customer 实体，了解顾客的相关信息',
+};
 
 // dataZh wins over staticZh on key collision — load-bearing in Chunk 4,
 // where quest.<id>.* data keys must resolve from dataZh (static quests)

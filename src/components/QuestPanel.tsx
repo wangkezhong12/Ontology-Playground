@@ -1,6 +1,20 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../store/appStore';
 import { Trophy, Star, X, CheckCircle, Lightbulb, Target } from 'lucide-react';
+import { t } from '../i18n';
+import { quests as staticQuests } from '../data/quests';
+import type { Quest } from '../data/quests';
+
+/** Dictionary lookups apply only to the 5 built-in quests. Generated quests
+ *  (which reuse ids quest-1..6) render their pre-resolved strings as-is.
+ *  Reference identity is intentional — ids collide by design. */
+const isStaticQuest = (q: Quest): boolean => staticQuests.includes(q);
+
+const questTitle = (q: Quest): string =>
+  isStaticQuest(q) ? t(`quest.${q.id}.title`, undefined, q.title) : q.title;
+
+const questDescription = (q: Quest): string =>
+  isStaticQuest(q) ? t(`quest.${q.id}.description`, undefined, q.description) : q.description;
 
 export function QuestPanel() {
   const {
@@ -19,7 +33,7 @@ export function QuestPanel() {
       <div className="panel-header">
         <h3 className="panel-title">
           <Target size={16} style={{ marginRight: 8 }} />
-          Quests
+          {t('quest.panelTitle')}
         </h3>
       </div>
 
@@ -34,9 +48,9 @@ export function QuestPanel() {
           >
             <div className="active-quest-title">
               <Target size={18} />
-              {activeQuest.title}
+              {questTitle(activeQuest)}
             </div>
-            
+
             <div className="quest-progress">
               <div className="progress-bar">
                 <motion.div
@@ -58,12 +72,18 @@ export function QuestPanel() {
               className="current-step"
             >
               <div className="step-instruction">
-                {activeQuest.steps[currentStepIndex].instruction}
+                {isStaticQuest(activeQuest)
+                  ? t(`quest.${activeQuest.id}.step.${activeQuest.steps[currentStepIndex].id}.instruction`,
+                      undefined, activeQuest.steps[currentStepIndex].instruction)
+                  : activeQuest.steps[currentStepIndex].instruction}
               </div>
               {activeQuest.steps[currentStepIndex].hint && (
                 <div className="step-hint">
                   <Lightbulb size={12} style={{ marginRight: 4 }} />
-                  {activeQuest.steps[currentStepIndex].hint}
+                  {isStaticQuest(activeQuest)
+                    ? t(`quest.${activeQuest.id}.step.${activeQuest.steps[currentStepIndex].id}.hint`,
+                        undefined, activeQuest.steps[currentStepIndex].hint ?? '')
+                    : activeQuest.steps[currentStepIndex].hint}
                 </div>
               )}
             </motion.div>
@@ -71,7 +91,7 @@ export function QuestPanel() {
             <div className="quest-actions">
               <button className="btn btn-secondary" onClick={abandonQuest}>
                 <X size={16} />
-                Abandon
+                {t('quest.abandon')}
               </button>
             </div>
           </motion.div>
@@ -95,17 +115,17 @@ export function QuestPanel() {
               <div className="quest-header">
                 <span className="quest-title">
                   {isCompleted && <CheckCircle size={16} style={{ marginRight: 6, color: 'var(--ms-green)' }} />}
-                  {quest.title}
+                  {questTitle(quest)}
                 </span>
                 <span className={`quest-badge ${quest.difficulty}`}>
-                  {quest.difficulty}
+                  {t(`quest.difficulty.${quest.difficulty}` as const)}
                 </span>
               </div>
-              <p className="quest-description">{quest.description}</p>
+              <p className="quest-description">{questDescription(quest)}</p>
               <div className="quest-reward">
                 <Trophy size={14} />
                 <span>{quest.reward.badgeIcon} {quest.reward.badge}</span>
-                <span className="quest-points">+{quest.reward.points} pts</span>
+                <span className="quest-points">{t('quest.points', { count: quest.reward.points })}</span>
               </div>
             </motion.div>
           );
@@ -117,7 +137,7 @@ export function QuestPanel() {
         <div className="badges-panel">
           <div className="section-title">
             <Star size={14} />
-            Earned Badges ({earnedBadges.length})
+            {t('quest.earnedBadges', { count: earnedBadges.length })}
           </div>
           <div className="badges-grid">
             {earnedBadges.map((badge, index) => (
@@ -134,7 +154,7 @@ export function QuestPanel() {
             ))}
           </div>
           <div style={{ marginTop: 8, fontSize: 12, color: 'var(--ms-yellow)', fontWeight: 600 }}>
-            Total: {totalPoints} points
+            {t('quest.totalPoints', { count: totalPoints })}
           </div>
         </div>
       )}
