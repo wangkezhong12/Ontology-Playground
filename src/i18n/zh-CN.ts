@@ -476,7 +476,7 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   'designer.rdfPlaceholder': '在此粘贴或编辑 RDF/XML 内容…',
   'designer.startFromTemplate': '从模板开始',
   'designer.templateHint': '选择一个领域快速开始，或手动添加实体。',
-  'designer.submit.descPrefix': '与社区分享您的本体！下载下方文件，然后在',
+  'designer.submit.descPrefix': '与社区分享您的本体！下载下方文件，然后在 ',
   'designer.submit.repoLink': 'Ontology Playground 仓库',
   'designer.submit.descSuffix': '提交 pull request。',
   'designer.submit.howTo': '如何提交',
@@ -493,9 +493,60 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
 
 // Data-driven keys (quests, designer templates).
 const dataZh: Record<string, string> = {
-  // seeded now for the guard test; remaining static-quest keys land in Chunk 4
+  // 静态任务（quest-1..5）：与 src/data/quests.ts 一一对应；
+  // 徽章名称等数据内容保持英文。
   'quest.quest-1.title': '认识实体',
+  'quest.quest-1.description':
+    '探索实体类型，发现 Fourth Coffee 本体的核心构建模块。',
   'quest.quest-1.step.step-1-1.instruction': '点击 Customer 实体，了解顾客的相关信息',
+  'quest.quest-1.step.step-1-1.hint': '在图中找到 👤 图标',
+  'quest.quest-1.step.step-1-2.instruction': '接下来探索 Product 实体',
+  'quest.quest-1.step.step-1-2.hint': '找到 ☕ 咖啡杯图标',
+  'quest.quest-1.step.step-1-3.instruction': '最后，看看 Store 实体',
+  'quest.quest-1.step.step-1-3.hint': '找到 🏪 门店图标',
+
+  'quest.quest-2.title': '咖啡豆之旅',
+  'quest.quest-2.description': '沿着关系追踪一颗咖啡豆从供应商到顾客的旅程。',
+  'quest.quest-2.step.step-2-1.instruction': '从 Supplier 实体开始——咖啡豆从这里发出',
+  'quest.quest-2.step.step-2-1.hint': '找到 🚚 卡车图标',
+  'quest.quest-2.step.step-2-2.instruction': '沿着“sourcedFrom”关系找到 Product',
+  'quest.quest-2.step.step-2-2.hint': '点击连接 Supplier 与 Product 的连线',
+  'quest.quest-2.step.step-2-3.instruction':
+    '探索“contains”关系，看看商品如何出现在订单中',
+  'quest.quest-2.step.step-2-3.hint': '查看 Order 与 Product 之间的连接',
+  'quest.quest-2.step.step-2-4.instruction':
+    '最后，查看“places”关系，看看订单是谁下的',
+  'quest.quest-2.step.step-2-4.hint': '找到从 Customer 指向 Order 的关系',
+
+  'quest.quest-3.title': '供应链导航',
+  'quest.quest-3.description': '了解货运如何把供应商与门店连接起来。',
+  'quest.quest-3.step.step-3-1.instruction': '点击 Shipment 实体',
+  'quest.quest-3.step.step-3-1.hint': '找到 📦 包裹图标',
+  'quest.quest-3.step.step-3-2.instruction': '探索指向 Supplier 的“sentBy”关系',
+  'quest.quest-3.step.step-3-2.hint': '看看货运从哪里发出',
+  'quest.quest-3.step.step-3-3.instruction': '沿着“deliveredTo”关系找到 Store',
+  'quest.quest-3.step.step-3-3.hint': '看看货运送到哪里',
+
+  'quest.quest-4.title': '查询探索',
+  'quest.quest-4.description': '学习用自然语言查询来提问。',
+  'quest.quest-4.step.step-4-1.instruction':
+    '试试提问：“Show me all Gold tier customers”',
+  'quest.quest-4.step.step-4-1.hint': '在查询演练场中输入',
+  'quest.quest-4.step.step-4-2.instruction':
+    '再问问：“Which products come from Ethiopia?”',
+  'quest.quest-4.step.step-4-2.hint': '用自然语言按产地筛选',
+  'quest.quest-4.step.step-4-3.instruction':
+    '试一次遍历查询：“What orders did Arif Ramadhan place?”',
+  'quest.quest-4.step.step-4-3.hint': '这会沿着 Customer → Order 关系遍历',
+
+  'quest.quest-5.title': '数据绑定探秘',
+  'quest.quest-5.description': '了解本体概念如何连接到真实的数据平台数据源。',
+  'quest.quest-5.step.step-5-1.instruction': '选择 Customer 实体，查看它的数据绑定',
+  'quest.quest-5.step.step-5-1.hint': '在检查器中找到“Data Bindings”区域',
+  'quest.quest-5.step.step-5-2.instruction': '查看 Customer 的属性如何映射到源数据列',
+  'quest.quest-5.step.step-5-2.hint': '注意“name”如何映射到源中的“full_name”',
+  'quest.quest-5.step.step-5-3.instruction': '查看 Product 实体的绑定，记下它的源和表',
+  'quest.quest-5.step.step-5-3.hint': '查看 Product 下方的数据绑定卡片',
 };
 
 // dataZh wins over staticZh on key collision — load-bearing in Chunk 4,

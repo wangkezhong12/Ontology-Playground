@@ -56,10 +56,9 @@ describe('QuestPanel i18n guard', () => {
 
   it('renders Chinese for static quests (guard positive direction)', () => {
     // Reference identity preserved: setState with the imported array itself.
-    const [first] = staticQuests;
     useAppStore.setState({
-      availableQuests: [first],
-      activeQuest: first,
+      availableQuests: staticQuests,
+      activeQuest: staticQuests[0],
       currentStepIndex: 0,
       completedQuests: [],
     });
@@ -67,5 +66,8 @@ describe('QuestPanel i18n guard', () => {
     // title renders twice (active panel + list card)
     expect(screen.getAllByText('认识实体')).toHaveLength(2);
     expect(screen.getByText('点击 Customer 实体，了解顾客的相关信息')).toBeInTheDocument();
+    // quest-5's zh title (list card only) catches mis-keyed quest-2..5
+    // translations, which would otherwise silently fall back to English.
+    expect(screen.getByText('数据绑定探秘')).toBeInTheDocument();
   });
 });

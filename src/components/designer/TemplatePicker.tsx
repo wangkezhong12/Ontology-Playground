@@ -13,15 +13,15 @@ export function TemplatePicker() {
         <p>{t('designer.templateHint')}</p>
       </div>
       <div className="template-picker-grid">
-        {designerTemplates.map((t) => (
+        {designerTemplates.map((tpl) => (
           <button
-            key={t.id}
+            key={tpl.id}
             className="template-card"
-            onClick={() => loadDraft(t.ontology)}
+            onClick={() => loadDraft(tpl.ontology)}
           >
-            <span className="template-card-icon">{t.icon}</span>
-            <span className="template-card-label">{t.label}</span>
-            <span className="template-card-desc">{t.description}</span>
+            <span className="template-card-icon">{tpl.icon}</span>
+            <span className="template-card-label">{tpl.label}</span>
+            <span className="template-card-desc">{tpl.description}</span>
           </button>
         ))}
       </div>
