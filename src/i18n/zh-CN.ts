@@ -103,6 +103,19 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
 
   // stats panel
   'stats.title': '本体洞察',
+
+  // path finder panel
+  'pathfinder.title': '路径查找',
+  'pathfinder.from': '起点',
+  'pathfinder.to': '终点',
+  'pathfinder.selectEntity': '选择实体…',
+  'pathfinder.find': '查找路径',
+  'pathfinder.clear': '清空',
+  'pathfinder.sameEntity': '请选择两个不同的实体。',
+  'pathfinder.noPath': '未找到这些实体之间的有向路径。',
+  'pathfinder.shortestPathLabel': '最短路径 —',
+  'pathfinder.hop': '{count} 跳',
+  'pathfinder.hops': '{count} 跳',
 };
 
 // Data-driven keys (quests, designer templates).

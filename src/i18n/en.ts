@@ -102,4 +102,17 @@ export const en = {
 
   // stats panel
   'stats.title': 'Ontology Insights',
+
+  // path finder panel
+  'pathfinder.title': 'Path Finder',
+  'pathfinder.from': 'From',
+  'pathfinder.to': 'To',
+  'pathfinder.selectEntity': 'Select entity…',
+  'pathfinder.find': 'Find Path',
+  'pathfinder.clear': 'Clear',
+  'pathfinder.sameEntity': 'Select two different entities.',
+  'pathfinder.noPath': 'No directed path found between these entities.',
+  'pathfinder.shortestPathLabel': 'Shortest path —',
+  'pathfinder.hop': '{count} hop',
+  'pathfinder.hops': '{count} hops',
 } as const;
