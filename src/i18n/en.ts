@@ -99,4 +99,7 @@ export const en = {
   'inspector.propertiesCount': 'Properties ({count})',
   'inspector.relationshipsCount': 'Relationships ({count})',
   'inspector.dataBindings': 'Data Bindings',
+
+  // stats panel
+  'stats.title': 'Ontology Insights',
 } as const;

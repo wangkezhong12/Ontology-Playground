@@ -100,6 +100,9 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   'inspector.propertiesCount': '属性（{count}）',
   'inspector.relationshipsCount': '关系（{count}）',
   'inspector.dataBindings': '数据绑定',
+
+  // stats panel
+  'stats.title': '本体洞察',
 };
 
 // Data-driven keys (quests, designer templates).
