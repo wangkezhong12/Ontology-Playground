@@ -186,7 +186,9 @@ function App() {
     { id: 'help', label: t('palette.help'), icon: <HelpCircle size={18} />, shortcut: '?', action: () => setShowHelp(true) },
     { id: 'data-sources', label: t('palette.dataSources'), icon: <Database size={18} />, action: () => setShowDataSources(true) },
     { id: 'theme', label: t('palette.theme'), icon: <Palette size={18} />, action: cycleTheme },
-    // language is a dep so memoized labels re-resolve after a toggle
+    // 'language' is load-bearing: t() reads the store at call time, so the memo
+    // must re-run on toggle. exhaustive-deps can't see the implicit dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   ], [openGallery, openDesigner, openLearn, cycleTheme, language, t]);
 
   // Full-page views
