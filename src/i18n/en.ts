@@ -38,4 +38,32 @@ export const en = {
 
   // test fixtures
   'test.enOnlyFixture': 'English only fixture',
+
+  // header
+  'header.preview': '(Preview)',
+  'header.untitled': 'Untitled Ontology',
+  'header.points': 'points',
+  'header.badges': 'badges',
+  'header.share': 'Share',
+  'header.copied': 'Copied!',
+  'header.downloadedRdf': 'Downloaded RDF',
+  'header.encoding': 'Encoding…',
+  'header.shareTitleLink': 'Copy shareable link to this ontology',
+  'header.shareTitleDownload': 'Share this ontology via link',
+  'header.summary': 'Summary',
+  'header.summaryTitle': 'View Ontology Summary',
+  'header.aiBuilder': 'AI Builder',
+  'header.catalogue': 'Catalogue',
+  'header.designer': 'Designer',
+  'header.school': 'Ontology School',
+  'header.importExport': 'Import / Export',
+  'header.help': 'Help',
+  'header.about': 'About',
+  'header.dataSources': 'Data Sources',
+  'header.theme': 'Theme',
+  'header.menu': 'Menu',
+  'header.theme.dark': 'Dark',
+  'header.theme.light': 'Light',
+  'header.theme.aurora': 'Aurora',
+  'header.theme.crimson': 'Crimson',
 } as const;

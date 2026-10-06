@@ -39,6 +39,34 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   'quest.difficulty.advanced': '高级',
 
   // NOTE: 'test.enOnlyFixture' intentionally absent — fallback test relies on it.
+
+  // header
+  'header.preview': '（预览）',
+  'header.untitled': '未命名本体',
+  'header.points': '分',
+  'header.badges': '徽章',
+  'header.share': '分享',
+  'header.copied': '已复制！',
+  'header.downloadedRdf': '已下载 RDF',
+  'header.encoding': '编码中…',
+  'header.shareTitleLink': '复制此本体的分享链接',
+  'header.shareTitleDownload': '通过链接分享此本体',
+  'header.summary': '摘要',
+  'header.summaryTitle': '查看本体摘要',
+  'header.aiBuilder': 'AI 构建器',
+  'header.catalogue': '目录',
+  'header.designer': '设计器',
+  'header.school': '本体学院',
+  'header.importExport': '导入 / 导出',
+  'header.help': '帮助',
+  'header.about': '关于',
+  'header.dataSources': '数据源',
+  'header.theme': '主题',
+  'header.menu': '菜单',
+  'header.theme.dark': '深色',
+  'header.theme.light': '浅色',
+  'header.theme.aurora': '极光',
+  'header.theme.crimson': '绯红',
 };
 
 // Data-driven keys (quests, designer templates). Empty until Chunk 4.
