@@ -28,6 +28,8 @@ export function QuestPanel() {
     abandonQuest
   } = useAppStore();
 
+  const step = activeQuest?.steps[currentStepIndex];
+
   return (
     <div className="quest-panel">
       <div className="panel-header">
@@ -71,20 +73,24 @@ export function QuestPanel() {
               animate={{ opacity: 1, x: 0 }}
               className="current-step"
             >
-              <div className="step-instruction">
-                {isStaticQuest(activeQuest)
-                  ? t(`quest.${activeQuest.id}.step.${activeQuest.steps[currentStepIndex].id}.instruction`,
-                      undefined, activeQuest.steps[currentStepIndex].instruction)
-                  : activeQuest.steps[currentStepIndex].instruction}
-              </div>
-              {activeQuest.steps[currentStepIndex].hint && (
-                <div className="step-hint">
-                  <Lightbulb size={12} style={{ marginRight: 4 }} />
-                  {isStaticQuest(activeQuest)
-                    ? t(`quest.${activeQuest.id}.step.${activeQuest.steps[currentStepIndex].id}.hint`,
-                        undefined, activeQuest.steps[currentStepIndex].hint ?? '')
-                    : activeQuest.steps[currentStepIndex].hint}
-                </div>
+              {step && (
+                <>
+                  <div className="step-instruction">
+                    {isStaticQuest(activeQuest)
+                      ? t(`quest.${activeQuest.id}.step.${step.id}.instruction`,
+                          undefined, step.instruction)
+                      : step.instruction}
+                  </div>
+                  {step.hint && (
+                    <div className="step-hint">
+                      <Lightbulb size={12} style={{ marginRight: 4 }} />
+                      {isStaticQuest(activeQuest)
+                        ? t(`quest.${activeQuest.id}.step.${step.id}.hint`,
+                            undefined, step.hint)
+                        : step.hint}
+                    </div>
+                  )}
+                </>
               )}
             </motion.div>
 

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { QuestPanel } from './QuestPanel';
 import { useAppStore } from '../store/appStore';
-import type { Quest } from '../data/quests';
+import { quests as staticQuests, type Quest } from '../data/quests';
 
 // A GENERATED-style quest: same id as a static quest but produced by
 // questGenerator for some loaded ontology. Reference identity (not id)
@@ -52,5 +52,20 @@ describe('QuestPanel i18n guard', () => {
     render(<QuestPanel />);
     expect(screen.getByText('任务')).toBeInTheDocument();   // panel title
     expect(screen.getByText('放弃')).toBeInTheDocument();   // Abandon
+  });
+
+  it('renders Chinese for static quests (guard positive direction)', () => {
+    // Reference identity preserved: setState with the imported array itself.
+    const [first] = staticQuests;
+    useAppStore.setState({
+      availableQuests: [first],
+      activeQuest: first,
+      currentStepIndex: 0,
+      completedQuests: [],
+    });
+    render(<QuestPanel />);
+    // title renders twice (active panel + list card)
+    expect(screen.getAllByText('认识实体')).toHaveLength(2);
+    expect(screen.getByText('点击 Customer 实体，了解顾客的相关信息')).toBeInTheDocument();
   });
 });
