@@ -124,4 +124,12 @@ export const en = {
   'search.resultsLabel': 'Search results',
   'search.noResults': 'No results for "{query}"',
   'search.propertyCount': '{count} properties',
+
+  // query playground
+  'query.title': 'Natural Language Query (NL2Ontology)',
+  'query.placeholder': 'Ask about {name}...',
+  'query.clear': 'Clear',
+  'query.clearQuery': 'Clear query',
+  'query.run': 'Run query',
+  'query.tryAsking': 'Try asking:',
 } as const;

@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../store/appStore';
+import { useI18n } from '../i18n';
 import { processQuery, generateQuerySuggestions } from '../data/queryEngine';
 import { parseInlineEmphasis } from '../lib/contentSafety';
 import { Search, Sparkles, X, Lightbulb } from 'lucide-react';
@@ -10,6 +11,7 @@ export function QueryPlayground() {
   const [result, setResult] = useState<string | null>(null);
   const [interpretation, setInterpretation] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const { t } = useI18n();
   
   const { 
     currentOntology,
@@ -89,27 +91,27 @@ export function QueryPlayground() {
     <div className="query-section">
       <div className="section-title">
         <Sparkles size={14} />
-        Natural Language Query (NL2Ontology)
+        {t('query.title')}
       </div>
       
       <div className="query-input-container">
         <input
           type="text"
           className="query-input"
-          placeholder={`Ask about ${currentOntology.name}...`}
+          placeholder={t('query.placeholder', { name: currentOntology.name })}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={handleKeyPress}
         />
         {input && (
-          <button className="icon-btn" onClick={handleClear} title="Clear" aria-label="Clear query">
+          <button className="icon-btn" onClick={handleClear} title={t('query.clear')} aria-label={t('query.clearQuery')}>
             <X size={18} />
           </button>
         )}
         <button 
           className="btn btn-primary" 
           onClick={handleQuery}
-          aria-label="Run query"
+          aria-label={t('query.run')}
           disabled={isProcessing}
         >
           {isProcessing ? (
@@ -128,7 +130,7 @@ export function QueryPlayground() {
       {!result && !isProcessing && (
         <div style={{ marginBottom: 12 }}>
           <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 8 }}>
-            Try asking:
+            {t('query.tryAsking')}
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {sampleQueries.slice(0, 3).map((query, index) => (

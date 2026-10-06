@@ -125,6 +125,14 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   'search.resultsLabel': '搜索结果',
   'search.noResults': '未找到"{query}"的相关结果',
   'search.propertyCount': '{count} 个属性',
+
+  // query playground
+  'query.title': '自然语言查询（NL2Ontology）',
+  'query.placeholder': '询问 {name}…',
+  'query.clear': '清空',
+  'query.clearQuery': '清空查询',
+  'query.run': '运行查询',
+  'query.tryAsking': '试试提问：',
 };
 
 // Data-driven keys (quests, designer templates).
