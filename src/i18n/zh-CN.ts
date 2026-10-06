@@ -507,7 +507,7 @@ const dataZh: Record<string, string> = {
 
   'quest.quest-2.title': '咖啡豆之旅',
   'quest.quest-2.description': '沿着关系追踪一颗咖啡豆从供应商到顾客的旅程。',
-  'quest.quest-2.step.step-2-1.instruction': '从 Supplier 实体开始——咖啡豆从这里发出',
+  'quest.quest-2.step.step-2-1.instruction': '从 Supplier 实体开始——咖啡豆的旅程从这里开始',
   'quest.quest-2.step.step-2-1.hint': '找到 🚚 卡车图标',
   'quest.quest-2.step.step-2-2.instruction': '沿着“sourcedFrom”关系找到 Product',
   'quest.quest-2.step.step-2-2.hint': '点击连接 Supplier 与 Product 的连线',
@@ -542,10 +542,10 @@ const dataZh: Record<string, string> = {
   'quest.quest-5.title': '数据绑定探秘',
   'quest.quest-5.description': '了解本体概念如何连接到真实的数据平台数据源。',
   'quest.quest-5.step.step-5-1.instruction': '选择 Customer 实体，查看它的数据绑定',
-  'quest.quest-5.step.step-5-1.hint': '在检查器中找到“Data Bindings”区域',
+  'quest.quest-5.step.step-5-1.hint': '在检查器中找到“数据绑定”区域',
   'quest.quest-5.step.step-5-2.instruction': '查看 Customer 的属性如何映射到源数据列',
   'quest.quest-5.step.step-5-2.hint': '注意“name”如何映射到源中的“full_name”',
-  'quest.quest-5.step.step-5-3.instruction': '查看 Product 实体的绑定，记下它的源和表',
+  'quest.quest-5.step.step-5-3.instruction': '查看 Product 实体的绑定，记下它的数据源和表名',
   'quest.quest-5.step.step-5-3.hint': '查看 Product 下方的数据绑定卡片',
 };
 
