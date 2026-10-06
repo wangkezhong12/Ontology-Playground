@@ -35,6 +35,8 @@ function lookup(key: string, fallback?: string): string {
 export function t(key: StaticKey, vars?: Vars): string;
 // Overload 2 — data-driven keys; fallback is REQUIRED and holds the English
 // text from the data file (quests, templates).
+// Convention: NEVER pass a fallback for static keys — a typo'd static key
+// would then compile silently instead of failing type-check.
 export function t(key: string, vars: Vars | undefined, fallback: string): string;
 export function t(key: string, vars?: Vars, fallback?: string): string {
   return interpolate(lookup(key, fallback), vars);

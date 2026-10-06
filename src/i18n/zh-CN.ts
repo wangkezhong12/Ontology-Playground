@@ -44,4 +44,7 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
 // Data-driven keys (quests, designer templates). Empty until Chunk 4.
 const dataZh: Record<string, string> = {};
 
+// dataZh wins over staticZh on key collision — load-bearing in Chunk 4,
+// where quest.<id>.* data keys must resolve from dataZh (static quests)
+// while generated quests bypass the dictionary entirely.
 export const zhCN: Record<string, string> = { ...staticZh, ...dataZh };

@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import { act } from 'react';
 import { useAppStore } from '../store/appStore';
 import { t, useI18n } from './index';
 
@@ -52,5 +53,18 @@ describe('useI18n()', () => {
     expect(hook!.language).toBe('zh-CN');
     expect(typeof hook!.t).toBe('function');
     expect(typeof hook!.setLanguage).toBe('function');
+  });
+
+  it('re-renders with the new language when the store toggles', () => {
+    const Probe = () => {
+      const { t } = useI18n();
+      return <span>{t('common.close')}</span>;
+    };
+    render(<Probe />);
+    expect(screen.getByText('关闭')).toBeInTheDocument();
+    act(() => {
+      useAppStore.getState().setLanguage('en');
+    });
+    expect(screen.getByText('Close')).toBeInTheDocument();
   });
 });
