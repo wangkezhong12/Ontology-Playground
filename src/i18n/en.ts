@@ -66,4 +66,24 @@ export const en = {
   'header.theme.light': 'Light',
   'header.theme.aurora': 'Aurora',
   'header.theme.crimson': 'Crimson',
+
+  // app shell
+  'app.graph': 'Graph',
+  'app.quests': 'Quests',
+  'app.inspector': 'Inspector',
+  'app.query': 'Query',
+  'app.close': '✕ Close',
+  'app.title': 'Ontology Playground (Preview) | Interactive Ontology Explorer',
+  'app.titleZh': 'Ontology Playground（预览）| 交互式本体浏览器',
+  'toast.questComplete': 'Quest Complete! Earned: {badge}',
+  // command palette
+  'palette.catalogue': 'Open Catalogue',
+  'palette.designer': 'Open Designer',
+  'palette.school': 'Open Ontology School',
+  'palette.importExport': 'Import / Export',
+  'palette.summary': 'View Summary',
+  'palette.about': 'About & Trademark Notice',
+  'palette.help': 'Help',
+  'palette.dataSources': 'Data Sources',
+  'palette.theme': 'Switch Theme',
 } as const;

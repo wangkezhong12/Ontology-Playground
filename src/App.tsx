@@ -28,6 +28,7 @@ import {
 import type { CommandItem } from './components';
 import { useAppStore, themeClass, THEME_OPTIONS } from './store/appStore';
 import { useDesignerStore } from './store/designerStore';
+import { useI18n } from './i18n';
 import { useRoute } from './hooks/useRoute';
 import { navigate } from './lib/router';
 import { decodeSharePayload } from './lib/shareCodec';
@@ -56,21 +57,29 @@ function App() {
   const [toast, setToast] = useState<{ message: string; icon: string } | null>(null);
   const [mobilePanel, setMobilePanel] = useState<'graph' | 'quests' | 'inspector' | 'query'>('graph');
   const [showCommandPalette, setShowCommandPalette] = useState(false);
-  const { theme, setTheme, earnedBadges, loadOntology } = useAppStore();
+  const { theme, setTheme, earnedBadges, loadOntology, language } = useAppStore();
+  const { t } = useI18n();
 
   // Show toast when a new badge is earned
   useEffect(() => {
     if (earnedBadges.length > 0) {
       const latestBadge = earnedBadges[earnedBadges.length - 1];
       setToast({
-        message: `Quest Complete! Earned: ${latestBadge.badge}`,
+        message: t('toast.questComplete', { badge: latestBadge.badge }),
         icon: latestBadge.icon
       });
-      
+
       const timer = setTimeout(() => setToast(null), 4000);
       return () => clearTimeout(timer);
     }
-  }, [earnedBadges]);
+  }, [earnedBadges, t]);
+
+  // Keep <title> and <html lang> in sync with the selected language
+  // (index.html is a static lang="en" — this matters for screen readers)
+  useEffect(() => {
+    document.title = language === 'zh-CN' ? t('app.titleZh') : t('app.title');
+    document.documentElement.lang = language === 'zh-CN' ? 'zh-CN' : 'en';
+  }, [language, t]);
 
   // Deep-link: /#/catalogue/<id> — load a specific ontology from the catalogue
   useEffect(() => {
@@ -168,16 +177,17 @@ function App() {
 
   // ── Command palette items ──────────────────────────────
   const commands = useMemo<CommandItem[]>(() => [
-    { id: 'catalogue', label: 'Open Catalogue', icon: <LayoutGrid size={18} />, action: openGallery },
-    { id: 'designer', label: 'Open Designer', icon: <PenTool size={18} />, action: openDesigner },
-    { id: 'learn', label: 'Open Ontology School', icon: <BookOpen size={18} />, action: openLearn },
-    { id: 'import-export', label: 'Import / Export', icon: <FileJson size={18} />, action: () => setShowImportExport(true) },
-    { id: 'summary', label: 'View Summary', icon: <FileText size={18} />, action: () => setShowSummary(true) },
-    { id: 'about', label: 'About & Trademark Notice', icon: <Info size={18} />, action: () => setShowAbout(true) },
-    { id: 'help', label: 'Help', icon: <HelpCircle size={18} />, shortcut: '?', action: () => setShowHelp(true) },
-    { id: 'data-sources', label: 'Data Sources', icon: <Database size={18} />, action: () => setShowDataSources(true) },
-    { id: 'theme', label: 'Switch Theme', icon: <Palette size={18} />, action: cycleTheme },
-  ], [openGallery, openDesigner, openLearn, cycleTheme]);
+    { id: 'catalogue', label: t('palette.catalogue'), icon: <LayoutGrid size={18} />, action: openGallery },
+    { id: 'designer', label: t('palette.designer'), icon: <PenTool size={18} />, action: openDesigner },
+    { id: 'learn', label: t('palette.school'), icon: <BookOpen size={18} />, action: openLearn },
+    { id: 'import-export', label: t('palette.importExport'), icon: <FileJson size={18} />, action: () => setShowImportExport(true) },
+    { id: 'summary', label: t('palette.summary'), icon: <FileText size={18} />, action: () => setShowSummary(true) },
+    { id: 'about', label: t('palette.about'), icon: <Info size={18} />, action: () => setShowAbout(true) },
+    { id: 'help', label: t('palette.help'), icon: <HelpCircle size={18} />, shortcut: '?', action: () => setShowHelp(true) },
+    { id: 'data-sources', label: t('palette.dataSources'), icon: <Database size={18} />, action: () => setShowDataSources(true) },
+    { id: 'theme', label: t('palette.theme'), icon: <Palette size={18} />, action: cycleTheme },
+    // language is a dep so memoized labels re-resolve after a toggle
+  ], [openGallery, openDesigner, openLearn, cycleTheme, language, t]);
 
   // Full-page views
   if (route.page === 'designer') {
@@ -213,23 +223,23 @@ function App() {
       {/* Mobile bottom tabs — visible only on small screens via CSS */}
       <div className="mobile-panel-tabs">
         <button className={`mobile-tab ${mobilePanel === 'graph' ? 'active' : ''}`} onClick={() => setMobilePanel('graph')}>
-          <Search size={18} /> Graph
+          <Search size={18} /> {t('app.graph')}
         </button>
         <button className={`mobile-tab ${mobilePanel === 'quests' ? 'active' : ''}`} onClick={() => setMobilePanel('quests')}>
-          <Compass size={18} /> Quests
+          <Compass size={18} /> {t('app.quests')}
         </button>
         <button className={`mobile-tab ${mobilePanel === 'inspector' ? 'active' : ''}`} onClick={() => setMobilePanel('inspector')}>
-          <Info size={18} /> Inspector
+          <Info size={18} /> {t('app.inspector')}
         </button>
         <button className={`mobile-tab ${mobilePanel === 'query' ? 'active' : ''}`} onClick={() => setMobilePanel('query')}>
-          <MessageSquare size={18} /> Query
+          <MessageSquare size={18} /> {t('app.query')}
         </button>
       </div>
 
       {/* Mobile panel drawer — visible only on small screens when a panel is selected */}
       {mobilePanel !== 'graph' && (
         <div className="mobile-panel-drawer">
-          <button className="mobile-panel-close" onClick={() => setMobilePanel('graph')}>✕ Close</button>
+          <button className="mobile-panel-close" onClick={() => setMobilePanel('graph')}>{t('app.close')}</button>
           {mobilePanel === 'quests' && <QuestPanel />}
           {mobilePanel === 'inspector' && (
             <>

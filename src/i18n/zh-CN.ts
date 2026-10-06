@@ -67,6 +67,26 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   'header.theme.light': '浅色',
   'header.theme.aurora': '极光',
   'header.theme.crimson': '绯红',
+
+  // app shell
+  'app.graph': '图',
+  'app.quests': '任务',
+  'app.inspector': '检查器',
+  'app.query': '查询',
+  'app.close': '✕ 关闭',
+  'app.title': 'Ontology Playground (Preview) | Interactive Ontology Explorer',
+  'app.titleZh': 'Ontology Playground（预览）| 交互式本体浏览器',
+  'toast.questComplete': '任务完成！获得：{badge}',
+  // command palette
+  'palette.catalogue': '打开目录',
+  'palette.designer': '打开设计器',
+  'palette.school': '打开本体学院',
+  'palette.importExport': '导入 / 导出',
+  'palette.summary': '查看摘要',
+  'palette.about': '关于与商标声明',
+  'palette.help': '帮助',
+  'palette.dataSources': '数据源',
+  'palette.theme': '切换主题',
 };
 
 // Data-driven keys (quests, designer templates). Empty until Chunk 4.
