@@ -7,6 +7,8 @@ import { generateQuestsForOntology } from '../data/questGenerator';
 
 export type ThemeId = 'dark' | 'light' | 'aurora' | 'crimson';
 
+export type LanguageId = 'zh-CN' | 'en';
+
 export const THEME_OPTIONS: { id: ThemeId; label: string; swatch: string }[] = [
   { id: 'dark', label: 'Dark', swatch: '#1B1B1B' },
   { id: 'light', label: 'Light', swatch: '#F5F5F5' },
@@ -56,6 +58,19 @@ function getInitialTheme(): ThemeId {
 
 const initialTheme = getInitialTheme();
 
+function getInitialLanguage(): LanguageId {
+  if (typeof window === 'undefined' || !('localStorage' in window)) {
+    return 'zh-CN';
+  }
+  try {
+    return window.localStorage.getItem('language') === 'en' ? 'en' : 'zh-CN';
+  } catch {
+    return 'zh-CN';
+  }
+}
+
+const initialLanguage = getInitialLanguage();
+
 interface AppState {
   // Ontology State
   currentOntology: Ontology;
@@ -69,6 +84,7 @@ interface AppState {
   showDataBindings: boolean;
   theme: ThemeId;
   darkMode: boolean;
+  language: LanguageId;
   
   // Quest State
   availableQuests: Quest[];
@@ -96,6 +112,7 @@ interface AppState {
   toggleDataBindings: () => void;
   setTheme: (theme: ThemeId) => void;
   toggleDarkMode: () => void;
+  setLanguage: (lang: LanguageId) => void;
   
   // Quest Actions
   startQuest: (questId: string) => void;
@@ -122,6 +139,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   showDataBindings: false,
   theme: initialTheme,
   darkMode: isDarkTheme(initialTheme),
+  language: initialLanguage,
   
   // Initial Quest State - use default quests for Fourth Coffee
   availableQuests: defaultQuests,
@@ -199,6 +217,14 @@ export const useAppStore = create<AppState>((set, get) => ({
   toggleDarkMode: () => {
     const next: ThemeId = isDarkTheme(get().theme) ? 'light' : 'dark';
     get().setTheme(next);
+  },
+  setLanguage: (lang) => {
+    try {
+      localStorage.setItem('language', lang);
+    } catch {
+      // Ignore persistence errors; still update in-memory state
+    }
+    set({ language: lang });
   },
   
   // Quest Actions
