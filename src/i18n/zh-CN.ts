@@ -87,6 +87,19 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   'palette.help': '帮助',
   'palette.dataSources': '数据源',
   'palette.theme': '切换主题',
+
+  // inspector panel
+  'inspector.title': '检查器',
+  'inspector.emptyTitle': '选择一个元素',
+  'inspector.emptyText':
+    '点击图中的实体类型或关系，查看其属性、数据绑定和连接。',
+  'inspector.relationshipTitle': '关系',
+  'inspector.cardinality': '基数',
+  'inspector.relationshipAttributes': '关系属性',
+  'inspector.entityTitle': '实体类型',
+  'inspector.propertiesCount': '属性（{count}）',
+  'inspector.relationshipsCount': '关系（{count}）',
+  'inspector.dataBindings': '数据绑定',
 };
 
 // Data-driven keys (quests, designer templates).

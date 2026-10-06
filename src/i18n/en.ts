@@ -86,4 +86,17 @@ export const en = {
   'palette.help': 'Help',
   'palette.dataSources': 'Data Sources',
   'palette.theme': 'Switch Theme',
+
+  // inspector panel
+  'inspector.title': 'Inspector',
+  'inspector.emptyTitle': 'Select an Element',
+  'inspector.emptyText':
+    'Click on an entity type or relationship in the graph to inspect its properties, data bindings, and connections.',
+  'inspector.relationshipTitle': 'Relationship',
+  'inspector.cardinality': 'Cardinality',
+  'inspector.relationshipAttributes': 'Relationship Attributes',
+  'inspector.entityTitle': 'Entity Type',
+  'inspector.propertiesCount': 'Properties ({count})',
+  'inspector.relationshipsCount': 'Relationships ({count})',
+  'inspector.dataBindings': 'Data Bindings',
 } as const;
