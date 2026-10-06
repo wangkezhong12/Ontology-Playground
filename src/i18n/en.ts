@@ -115,4 +115,13 @@ export const en = {
   'pathfinder.shortestPathLabel': 'Shortest path —',
   'pathfinder.hop': '{count} hop',
   'pathfinder.hops': '{count} hops',
+
+  // search & filter
+  'search.title': 'Search & Filter',
+  'search.placeholder': 'Search entities, properties...',
+  'search.entitiesCount': 'Entities ({count})',
+  'search.relationshipsCount': 'Relationships ({count})',
+  'search.resultsLabel': 'Search results',
+  'search.noResults': 'No results for "{query}"',
+  'search.propertyCount': '{count} properties',
 } as const;

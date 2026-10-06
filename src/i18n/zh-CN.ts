@@ -116,6 +116,15 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   'pathfinder.shortestPathLabel': '最短路径 —',
   'pathfinder.hop': '{count} 跳',
   'pathfinder.hops': '{count} 跳',
+
+  // search & filter
+  'search.title': '搜索与筛选',
+  'search.placeholder': '搜索实体、属性…',
+  'search.entitiesCount': '实体（{count}）',
+  'search.relationshipsCount': '关系（{count}）',
+  'search.resultsLabel': '搜索结果',
+  'search.noResults': '未找到"{query}"的相关结果',
+  'search.propertyCount': '{count} 个属性',
 };
 
 // Data-driven keys (quests, designer templates).
