@@ -23,6 +23,7 @@ export const en = {
   'common.done': 'Done',
   'common.none': 'None',
   'common.entities': 'Entities',
+  'common.entityTypes': 'Entity Types',
   'common.relationships': 'Relationships',
   'common.properties': 'Properties',
 
@@ -132,4 +133,80 @@ export const en = {
   'query.clearQuery': 'Clear query',
   'query.run': 'Run query',
   'query.tryAsking': 'Try asking:',
+
+  // about modal
+  'modal.about.title': 'About Ontology Playground',
+  'modal.about.closeLabel': 'Close about dialog',
+  'modal.about.description':
+    'Ontology Playground is a community learning and design experience for building RDF/OWL ontologies, exploring graph relationships, and preparing models compatible with Microsoft Fabric IQ workflows.',
+  'modal.about.learnMore': 'Learn more about Microsoft Fabric IQ:',
+  'modal.about.trademarkNotice': 'Trademark Notice',
+  'modal.about.trademarkText':
+    'Trademarks This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is subject to and must follow Microsoft’s Trademark & Brand Guidelines. Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship. Any use of third-party trademarks or logos are subject to those third-party’s policies.',
+
+  // help modal (values may carry **strong** markers, parsed by parseInlineEmphasis)
+  'modal.help.title': 'How to Use Ontology Playground (Preview)',
+  'modal.help.exploreGraph.title': 'Explore the Graph',
+  'modal.help.exploreGraph.text':
+    'Click on any **entity type** (colored node) to see its properties, relationships, and data bindings. Click on **relationship lines** to see how entities connect. Use the controls in the bottom-left to zoom and reset the layout.',
+  'modal.help.completeQuests.title': 'Complete Quests',
+  'modal.help.completeQuests.text':
+    'Select a quest from the left panel to start a guided journey. Follow the instructions to click on specific entities or relationships. Complete all steps to earn **badges** and **points**!',
+  'modal.help.askQuestions.title': 'Ask Natural Language Questions',
+  'modal.help.askQuestions.text':
+    'Use the query playground in the bottom-right to ask questions like "Show me Gold tier customers" or "Which products come from Ethiopia?". The graph will highlight relevant entities and relationships.',
+  'modal.help.viewDataBindings.title': 'View Data Bindings',
+  'modal.help.viewDataBindings.text':
+    'When you select an entity type, the inspector shows how ontology properties map to real data sources in a data lakehouse, including lakehouse tables and semantic models.',
+  'modal.help.aboutOntology.title': 'About Microsoft Fabric IQ Ontology',
+  'modal.help.aboutOntology.text':
+    'An ontology is a shared, machine-understandable vocabulary of your business. It defines entity types (like Customer, Product), their properties, and relationships. This demo uses a fictional "Fourth Coffee" to illustrate these concepts.',
+  'modal.help.keyboardShortcuts': 'Keyboard Shortcuts',
+  'modal.help.shortcut.openPalette': 'Open command palette',
+  'modal.help.shortcut.openHelp': 'Open this help dialog',
+  'modal.help.shortcut.closeDialog': 'Close any dialog',
+  'modal.help.shortcut.navigatePalette': 'Navigate palette results',
+  'modal.help.shortcut.selectCommand': 'Select palette command',
+  'modal.help.gotIt': 'Got it!',
+
+  // data sources modal
+  'modal.dataSources.subtitle': 'How the Fourth Coffee ontology binds to a Data Lakehouse',
+  'modal.dataSources.lakehouseTitle': 'Data Lakehouse',
+  'modal.dataSources.lakehouseDescription':
+    'Unified storage layer for analytics. The ontology binds entity types to lakehouse tables and semantic models.',
+  'modal.dataSources.propertiesMapped': '{count} properties mapped',
+  'modal.dataSources.semanticModel': 'Semantic model',
+  'modal.dataSources.lakehouse': 'Lakehouse',
+  'modal.dataSources.sourceTable': 'Source Table:',
+  'modal.dataSources.columnMappings': 'Column Mappings',
+  'modal.dataSources.property': 'Property',
+  'modal.dataSources.column': 'Column',
+  'modal.dataSources.otherEntityTypes': 'Other Entity Types:',
+  'modal.dataSources.demoNote':
+    'In this demo, bindings are shown for Customer, Order, and Product. In a real deployment, all entities would be bound to data platform sources.',
+
+  // welcome modal
+  'modal.welcome.title': 'Welcome to Ontology Playground (Preview)',
+  'modal.welcome.subtitle': 'Explore Microsoft Fabric IQ Ontology through the lens of Fourth Coffee',
+  'modal.welcome.entityTypesText': 'Discover reusable logical models like Customer, Product, and Order',
+  'modal.welcome.relationshipsText': 'See how entities connect with typed, directional links',
+  'modal.welcome.dataBindingsText': 'Connect ontology concepts to real data platform sources',
+  'modal.welcome.nlQueries': 'NL Queries',
+  'modal.welcome.nlQueriesText': 'Ask questions in natural language and traverse the graph',
+  'modal.welcome.startExploring': 'Start Exploring',
+  'modal.welcome.footerText': 'Complete quests to earn badges and learn about Microsoft Fabric IQ Ontology',
+
+  // footer
+  'footer.builtWith': 'Built with GitHub Copilot',
+  'footer.supervisedBy': 'Supervised by videlalvaro',
+  'footer.deployedCommit': 'Deployed commit {sha}',
+
+  // graph chrome
+  'graph.focusMode': 'Focus mode',
+  'graph.focusExitHint': 'Click background or ✕ to exit',
+  'graph.zoomIn': 'Zoom In',
+  'graph.zoomOut': 'Zoom Out',
+  'graph.fit': 'Fit to View',
+  'graph.resetLayout': 'Reset Layout',
+  'graph.downloadPng': 'Download Graph as PNG',
 } as const;

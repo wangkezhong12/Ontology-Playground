@@ -26,6 +26,7 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   'common.done': '完成',
   'common.none': '无',
   'common.entities': '实体',
+  'common.entityTypes': '实体类型',
   'common.relationships': '关系',
   'common.properties': '属性',
 
@@ -123,7 +124,7 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   'search.entitiesCount': '实体（{count}）',
   'search.relationshipsCount': '关系（{count}）',
   'search.resultsLabel': '搜索结果',
-  'search.noResults': '未找到"{query}"的相关结果',
+  'search.noResults': '未找到“{query}”的相关结果',
   'search.propertyCount': '{count} 个属性',
 
   // query playground
@@ -133,6 +134,82 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   'query.clearQuery': '清空查询',
   'query.run': '运行查询',
   'query.tryAsking': '试试提问：',
+
+  // about modal
+  'modal.about.title': '关于 Ontology Playground',
+  'modal.about.closeLabel': '关闭关于对话框',
+  'modal.about.description':
+    'Ontology Playground 是一个社区学习与设计体验，用于构建 RDF/OWL 本体、探索图形关系，以及准备与 Microsoft Fabric IQ 工作流兼容的模型。',
+  'modal.about.learnMore': '详细了解 Microsoft Fabric IQ：',
+  'modal.about.trademarkNotice': '商标声明',
+  'modal.about.trademarkText':
+    '商标 本项目可能包含各种项目、产品或服务的商标或徽标。经授权使用 Microsoft 商标或徽标必须遵循 Microsoft 的《商标与品牌指南》。在修改后的项目版本中使用 Microsoft 商标或徽标，不得造成混淆或暗示获得 Microsoft 赞助。任何第三方商标或徽标的使用均受相应第三方政策的约束。',
+
+  // help modal（值中可含 **强调** 标记，由 parseInlineEmphasis 解析）
+  'modal.help.title': '如何使用 Ontology Playground（预览）',
+  'modal.help.exploreGraph.title': '探索图形',
+  'modal.help.exploreGraph.text':
+    '点击任意**实体类型**（彩色节点），查看其属性、关系和数据绑定。点击**关系连线**，了解实体之间的连接方式。使用左下角的控件进行缩放和重置布局。',
+  'modal.help.completeQuests.title': '完成任务',
+  'modal.help.completeQuests.text':
+    '从左侧面板选择一个任务，开始引导式旅程。按照说明点击特定的实体或关系。完成所有步骤即可赢取**徽章**和**积分**！',
+  'modal.help.askQuestions.title': '提出自然语言问题',
+  'modal.help.askQuestions.text':
+    '使用右下角的查询演练场提出问题，例如“Show me Gold tier customers”或“Which products come from Ethiopia?”。图形将高亮显示相关的实体和关系。',
+  'modal.help.viewDataBindings.title': '查看数据绑定',
+  'modal.help.viewDataBindings.text':
+    '选择实体类型时，检查器会显示本体属性如何映射到 lakehouse 中的真实数据源，包括 lakehouse 表和语义模型。',
+  'modal.help.aboutOntology.title': '关于 Microsoft Fabric IQ 本体',
+  'modal.help.aboutOntology.text':
+    '本体是对业务的一种共享的、机器可理解的词汇表。它定义实体类型（如 Customer、Product）及其属性和关系。此演示使用虚构的“Fourth Coffee”来说明这些概念。',
+  'modal.help.keyboardShortcuts': '键盘快捷键',
+  'modal.help.shortcut.openPalette': '打开命令面板',
+  'modal.help.shortcut.openHelp': '打开此帮助对话框',
+  'modal.help.shortcut.closeDialog': '关闭任意对话框',
+  'modal.help.shortcut.navigatePalette': '在面板结果间导航',
+  'modal.help.shortcut.selectCommand': '选择面板命令',
+  'modal.help.gotIt': '知道了！',
+
+  // data sources modal
+  'modal.dataSources.subtitle': 'Fourth Coffee 本体如何绑定到 Data Lakehouse',
+  'modal.dataSources.lakehouseTitle': 'Data Lakehouse',
+  'modal.dataSources.lakehouseDescription':
+    '统一的分析存储层。本体将实体类型绑定到 lakehouse 表和语义模型。',
+  'modal.dataSources.propertiesMapped': '已映射 {count} 个属性',
+  'modal.dataSources.semanticModel': '语义模型',
+  'modal.dataSources.lakehouse': 'Lakehouse',
+  'modal.dataSources.sourceTable': '源表：',
+  'modal.dataSources.columnMappings': '列映射',
+  'modal.dataSources.property': '属性',
+  'modal.dataSources.column': '列',
+  'modal.dataSources.otherEntityTypes': '其他实体类型：',
+  'modal.dataSources.demoNote':
+    '在此演示中，展示了 Customer、Order 和 Product 的绑定。在真实部署中，所有实体都将绑定到数据平台数据源。',
+
+  // welcome modal
+  'modal.welcome.title': '欢迎使用 Ontology Playground（预览）',
+  'modal.welcome.subtitle': '透过 Fourth Coffee 的视角探索 Microsoft Fabric IQ 本体',
+  'modal.welcome.entityTypesText': '探索可复用的逻辑模型，如 Customer、Product 和 Order',
+  'modal.welcome.relationshipsText': '了解实体如何通过有类型的定向链接进行连接',
+  'modal.welcome.dataBindingsText': '将本体概念连接到真实的数据平台数据源',
+  'modal.welcome.nlQueries': '自然语言查询',
+  'modal.welcome.nlQueriesText': '用自然语言提问并遍历图形',
+  'modal.welcome.startExploring': '开始探索',
+  'modal.welcome.footerText': '完成任务以赢取徽章，并了解 Microsoft Fabric IQ 本体',
+
+  // footer
+  'footer.builtWith': '使用 GitHub Copilot 构建',
+  'footer.supervisedBy': '由 videlalvaro 指导',
+  'footer.deployedCommit': '部署提交 {sha}',
+
+  // graph chrome
+  'graph.focusMode': '聚焦模式',
+  'graph.focusExitHint': '点击背景或 ✕ 退出',
+  'graph.zoomIn': '放大',
+  'graph.zoomOut': '缩小',
+  'graph.fit': '适应视图',
+  'graph.resetLayout': '重置布局',
+  'graph.downloadPng': '将图形下载为 PNG',
 };
 
 // Data-driven keys (quests, designer templates).

@@ -3,6 +3,7 @@ import cytoscape from 'cytoscape';
 import fcose from 'cytoscape-fcose';
 import type { Core, EventObject, LayoutOptions } from 'cytoscape';
 import { useAppStore } from '../store/appStore';
+import { useI18n } from '../i18n';
 import { ZoomIn, ZoomOut, Maximize2, RotateCcw, Download, Crosshair } from 'lucide-react';
 
 // Register fcose layout
@@ -39,6 +40,7 @@ export function OntologyGraph() {
   const mountedRef = useRef(true);
   const [focusNodeId, setFocusNodeId] = useState<string | null>(null);
   const focusNodeIdRef = useRef<string | null>(null);
+  const { t } = useI18n();
   
   // Helper to safely get cytoscape instance - returns null if destroyed
   const getCy = useCallback(() => {
@@ -544,7 +546,7 @@ export function OntologyGraph() {
       {focusNodeId && (
         <div className="graph-focus-badge">
           <Crosshair size={13} />
-          <span>Focus mode</span>
+          <span>{t('graph.focusMode')}</span>
           <button
             className="graph-focus-exit"
             onClick={() => {
@@ -553,31 +555,31 @@ export function OntologyGraph() {
               if (cy) cy.elements().removeClass('dimmed');
             }}
           >
-            Click background or ✕ to exit
+            {t('graph.focusExitHint')}
           </button>
         </div>
       )}
       
       <div className="graph-controls">
-        <button className="graph-control-btn" onClick={handleZoomIn} title="Zoom In">
+        <button className="graph-control-btn" onClick={handleZoomIn} title={t('graph.zoomIn')}>
           <ZoomIn size={18} />
         </button>
-        <button className="graph-control-btn" onClick={handleZoomOut} title="Zoom Out">
+        <button className="graph-control-btn" onClick={handleZoomOut} title={t('graph.zoomOut')}>
           <ZoomOut size={18} />
         </button>
-        <button className="graph-control-btn" onClick={handleFit} title="Fit to View">
+        <button className="graph-control-btn" onClick={handleFit} title={t('graph.fit')}>
           <Maximize2 size={18} />
         </button>
-        <button className="graph-control-btn" onClick={handleReset} title="Reset Layout">
+        <button className="graph-control-btn" onClick={handleReset} title={t('graph.resetLayout')}>
           <RotateCcw size={18} />
         </button>
-        <button className="graph-control-btn" onClick={handleDownload} title="Download Graph as PNG" data-testid="download-ontology-png">
+        <button className="graph-control-btn" onClick={handleDownload} title={t('graph.downloadPng')} data-testid="download-ontology-png">
           <Download size={18} />
         </button>
       </div>
 
       <div className="graph-legend">
-        <div className="legend-title">Entity Types</div>
+        <div className="legend-title">{t('common.entityTypes')}</div>
         {currentOntology.entityTypes.map(entity => (
           <div key={entity.id} className="legend-item">
             <div className="legend-dot" style={{ backgroundColor: entity.color }} />
