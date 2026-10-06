@@ -26,6 +26,7 @@ export const en = {
   'common.entityTypes': 'Entity Types',
   'common.relationships': 'Relationships',
   'common.properties': 'Properties',
+  'common.ontologyCounts': '{entityTypes} entity types, {relationships} relationships',
 
   // quest panel chrome (data-driven quest text lives in src/data files)
   'quest.panelTitle': 'Quests',
@@ -87,6 +88,12 @@ export const en = {
   'palette.help': 'Help',
   'palette.dataSources': 'Data Sources',
   'palette.theme': 'Switch Theme',
+  // palette chrome (command labels come from App.tsx and arrive pre-localized)
+  'palette.placeholder': 'Type a command…',
+  'palette.empty': 'No matching commands',
+  'palette.footerToOpen': 'to open',
+  'palette.footerNavigate': '↑↓ navigate',
+  'palette.footerSelect': '↵ select',
 
   // inspector panel
   'inspector.title': 'Inspector',
@@ -103,6 +110,9 @@ export const en = {
 
   // stats panel
   'stats.title': 'Ontology Insights',
+  // used by GalleryModal cards (established key name despite the namespace)
+  'stats.entitiesCount': '{count} entities',
+  'stats.relationshipsCount': '{count} relationships',
 
   // path finder panel
   'pathfinder.title': 'Path Finder',
@@ -195,6 +205,150 @@ export const en = {
   'modal.welcome.nlQueriesText': 'Ask questions in natural language and traverse the graph',
   'modal.welcome.startExploring': 'Start Exploring',
   'modal.welcome.footerText': 'Complete quests to earn badges and learn about Microsoft Fabric IQ Ontology',
+
+  // import / export modal (error keys keep en byte-faithful to the original
+  // thrown messages — pinned by ImportExportModal.test.tsx)
+  'modal.importExport.title': 'Import / Export Ontology',
+  'modal.importExport.subtitle': 'Load your own ontology or export the current one',
+  'modal.importExport.currentlyLoaded': 'Currently Loaded',
+  'modal.importExport.resetToDefault': 'Reset to Default',
+  'modal.importExport.loadSuccess': 'Ontology loaded successfully!',
+  'modal.importExport.importOntology': 'Import Ontology',
+  'modal.importExport.dropLegacy': 'Drop JSON or RDF/OWL file here',
+  'modal.importExport.dropRdf': 'Drop RDF/OWL (.rdf, .owl, .iq) file here',
+  'modal.importExport.exportCurrent': 'Export Current',
+  'modal.importExport.rdfFormatTitle': 'RDF/XML format for MS Fabric',
+  'modal.importExport.downloadFormat': 'Download .{format}',
+  'modal.importExport.downloadRdf': 'Download RDF/OWL',
+  'modal.importExport.jsonSchemaReference': 'JSON Schema Reference',
+  'modal.importExport.rdfParseError': 'RDF parse error: {message}',
+  'modal.importExport.unsupportedFormatLegacy':
+    'Unsupported file format: "{name}". Please import an RDF/OWL (.rdf, .owl, .iq) or JSON (.json) file.',
+  'modal.importExport.unsupportedFormatRdf':
+    'Unsupported file format: "{name}". Please import an RDF/OWL (.rdf, .owl, .iq) file.',
+  'modal.importExport.invalidStructure':
+    'Invalid ontology structure. Must have ontology.entityTypes and ontology.relationships.',
+  'modal.importExport.parseFailed': 'Failed to parse file',
+
+  // fabric export modal (also owns the shared Push button label)
+  'modal.fabric.push': 'Push to Microsoft Fabric',
+  'modal.fabric.subtitle': 'Create or update an ontology in your Fabric workspace',
+  'modal.fabric.workspaceId': 'Workspace ID',
+  'modal.fabric.workspaceIdHint': 'Find this in Fabric portal → Workspace settings → Overview',
+  'modal.fabric.accessToken': 'Access Token',
+  'modal.fabric.tokenPlaceholder': 'Paste your bearer token here',
+  'modal.fabric.tokenHintPrefix': 'Bearer token with ',
+  'modal.fabric.tokenHintSuffix': ' scope. Get one from the Fabric REST API "Try It" page or via MSAL.',
+  'modal.fabric.connecting': 'Connecting...',
+  'modal.fabric.connect': 'Connect to Workspace',
+  'modal.fabric.action': 'Action',
+  'modal.fabric.createMode': 'Create New',
+  'modal.fabric.updateMode': 'Update Existing ({count})',
+  'modal.fabric.selectOntology': 'Select Ontology',
+  'modal.fabric.selectPlaceholder': '— Select —',
+  'modal.fabric.createAndPush': 'Create & Push',
+  'modal.fabric.updateDefinition': 'Update Definition',
+  'modal.fabric.creating': 'Creating ontology in Fabric...',
+  'modal.fabric.updating': 'Updating ontology definition...',
+  'modal.fabric.provisioningHint': 'This may take a moment while Fabric provisions the resource.',
+  'modal.fabric.created': 'Ontology Created!',
+  'modal.fabric.updated': 'Definition Updated!',
+  'modal.fabric.resultName': 'Name:',
+  'modal.fabric.resultId': 'ID:',
+  'modal.fabric.resultWorkspace': 'Workspace:',
+  'modal.fabric.pushFailedHint': 'Push failed. Check the error above and try again.',
+  'modal.fabric.startOver': 'Start Over',
+  'modal.fabric.errorRequired': 'Both token and workspace ID are required.',
+  'modal.fabric.errorUuid':
+    'Workspace ID must be a valid UUID (e.g., cfafbeb1-8037-4d0c-896e-a46fb27ff229).',
+  'modal.fabric.apiError': 'API error ({status}): {message}',
+  'modal.fabric.connectFailed': 'Failed to connect to workspace',
+  'modal.fabric.pushFailed': 'Push failed',
+
+  // gallery modal (catalogue names/tags/authors are data-driven content and stay as-is)
+  'modal.gallery.title': 'Ontology Gallery',
+  'modal.gallery.subtitle': 'Browse and load ontologies from the catalogue',
+  'modal.gallery.searchPlaceholder': 'Search by name, tag, author…',
+  'modal.gallery.allSources': 'All sources',
+  'modal.gallery.sourceOfficial': 'Official',
+  'modal.gallery.sourceExternal': 'External',
+  'modal.gallery.sourceCommunity': 'Community',
+  'modal.gallery.allCategories': 'All categories',
+  'modal.gallery.loading': 'Loading catalogue…',
+  'modal.gallery.loadError': 'Failed to load catalogue ({status})',
+  'modal.gallery.empty': 'No ontologies match your filters.',
+  'modal.gallery.showingOne': 'Showing {visible} of {total} ontology',
+  'modal.gallery.showingMany': 'Showing {visible} of {total} ontologies',
+  'modal.gallery.active': 'Active',
+  'modal.gallery.viewRdf': 'View RDF source',
+  'modal.gallery.copyEmbed': 'Copy embed code',
+  'modal.gallery.editInDesigner': 'Edit in Designer',
+  'modal.gallery.load': 'Load',
+  'modal.gallery.showMore': 'Show more ({count} remaining)',
+  'modal.gallery.contributePrefix': 'Want to contribute? See ',
+  'modal.gallery.contributeMiddle': ' — add your ontology as an RDF file and ',
+  'modal.gallery.contributePr': 'open a PR',
+  'modal.gallery.contributeSuffix': '.',
+
+  // ontology summary modal (markdown export body is generated content, stays English)
+  'modal.summary.title': 'Ontology Summary',
+  'modal.summary.copyToClipboard': 'Copy to clipboard',
+
+  // guided tour (spotlight overlay)
+  'tour.step1.title': 'Navigation & Actions',
+  'tour.step1.body':
+    'Use the toolbar to access the Catalogue, Designer, Learn articles, Import/Export, and more. Press ⌘K anytime to open the command palette.',
+  'tour.step2.title': 'Ontology Graph',
+  'tour.step2.body':
+    'This is your ontology visualized as an interactive graph. Click on entity nodes or relationship edges to inspect them.',
+  'tour.step3.body':
+    'Complete guided quests to learn ontology concepts step by step. Earn badges and points along the way!',
+  'tour.step4.title': 'Inspector & Query',
+  'tour.step4.body':
+    'Select an entity to see its properties and data bindings. Use the query bar at the bottom to ask natural language questions.',
+  'tour.step5.title': 'Ontology Designer',
+  'tour.step5.body':
+    'Build your own ontologies from scratch or start from a template. Export as RDF or submit to the community catalogue.',
+  'tour.stepOf': 'Step {n} of {total}',
+  'tour.closeLabel': 'Close tour',
+  'tour.back': 'Back',
+  'tour.finish': 'Get started!',
+  'tour.skip': "Skip tour · don't show again",
+
+  // NL builder modal (gated behind VITE_ENABLE_AI_BUILDER)
+  'modal.nlBuilder.title': 'Describe Your Ontology',
+  'modal.nlBuilder.subtitle':
+    'Describe your business scenario in natural language or use voice input. AI will extract entities, relationships, and properties to create an ontology.',
+  'modal.nlBuilder.placeholder': 'Describe your business scenario...',
+  'modal.nlBuilder.stopRecording': 'Stop recording',
+  'modal.nlBuilder.startVoice': 'Start voice input',
+  'modal.nlBuilder.listening': 'Listening... Speak your ontology description',
+  'modal.nlBuilder.tryExample': 'Try an example:',
+  'modal.nlBuilder.example1':
+    'I run a hospital with doctors, patients, and departments. Patients visit doctors for appointments.',
+  'modal.nlBuilder.example2':
+    'An e-commerce platform with products, customers, orders, and reviews. Customers can return items.',
+  'modal.nlBuilder.example3':
+    'A university with students, professors, courses, and departments. Students enroll in courses.',
+  'modal.nlBuilder.example4':
+    'A restaurant chain with locations, employees, menu items, and customer orders with reservations.',
+  'modal.nlBuilder.generate': 'Generate Ontology',
+  'modal.nlBuilder.analyzing': 'Analyzing your description...',
+  'modal.nlBuilder.extracting': 'Extracting entities, relationships, and properties',
+  'modal.nlBuilder.preview': 'Preview',
+  'modal.nlBuilder.editJson': 'Edit JSON',
+  'modal.nlBuilder.propsCount': '{count} props',
+  'modal.nlBuilder.back': '← Back',
+  'modal.nlBuilder.apply': 'Apply Ontology',
+  'modal.nlBuilder.generationFailed': 'Generation Failed',
+  'modal.nlBuilder.unknownError': 'An unknown error occurred',
+  'modal.nlBuilder.errorUnknown': 'Unknown error occurred',
+  'modal.nlBuilder.tryAgain': 'Try Again',
+  'modal.nlBuilder.invalidJson': 'Invalid JSON in editor',
+  'modal.nlBuilder.generateFailed': 'Failed to generate ontology',
+  'modal.nlBuilder.voiceNetwork': 'Network error - try Chrome or Safari',
+  'modal.nlBuilder.voiceDenied': 'Microphone access denied',
+  'modal.nlBuilder.voiceStartFailed': 'Failed to start - try Chrome or Safari',
 
   // footer
   'footer.builtWith': 'Built with GitHub Copilot',

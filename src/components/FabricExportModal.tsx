@@ -2,6 +2,8 @@ import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { X, Cloud, Loader2, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
+import { useI18n } from '../i18n';
+import type { StaticKey, Vars } from '../i18n';
 import {
   createOntology,
   updateOntologyDefinition,
@@ -18,6 +20,7 @@ type Step = 'credentials' | 'workspace' | 'pushing' | 'done' | 'error';
 
 export function FabricExportModal({ onClose }: FabricExportModalProps) {
   const { currentOntology } = useAppStore();
+  const { t } = useI18n();
 
   const [step, setStep] = useState<Step>('credentials');
   const [token, setToken] = useState('');
@@ -25,25 +28,41 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
   const [existingOntologies, setExistingOntologies] = useState<FabricOntologyResponse[]>([]);
   const [selectedOntologyId, setSelectedOntologyId] = useState<string | ''>('');
   const [mode, setMode] = useState<'create' | 'update'>('create');
+  // Raw pass-through error text (e.g. API messages); localized errors use
+  // errorKey/errorVars and are translated at render scope.
   const [error, setError] = useState('');
+  const [errorKey, setErrorKey] = useState<StaticKey | null>(null);
+  const [errorVars, setErrorVars] = useState<Vars>({});
   const [result, setResult] = useState<FabricOntologyResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const clearError = () => {
+    setError('');
+    setErrorKey(null);
+    setErrorVars({});
+  };
+
+  const failWith = (key: StaticKey, vars?: Vars) => {
+    setErrorKey(key);
+    setErrorVars(vars ?? {});
+    setError('');
+  };
+
   const handleLoadWorkspace = useCallback(async () => {
     if (!token.trim() || !workspaceId.trim()) {
-      setError('Both token and workspace ID are required.');
+      failWith('modal.fabric.errorRequired');
       return;
     }
 
     // Basic UUID format validation
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(workspaceId.trim())) {
-      setError('Workspace ID must be a valid UUID (e.g., cfafbeb1-8037-4d0c-896e-a46fb27ff229).');
+      failWith('modal.fabric.errorUuid');
       return;
     }
 
     setLoading(true);
-    setError('');
+    clearError();
 
     try {
       const ontologies = await listOntologies(workspaceId.trim(), token.trim());
@@ -51,9 +70,13 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
       setStep('workspace');
     } catch (err) {
       if (err instanceof FabricApiError) {
-        setError(`API error (${err.status}): ${err.message}`);
+        failWith('modal.fabric.apiError', { status: err.status, message: err.message });
+      } else if (err instanceof Error) {
+        setErrorKey(null);
+        setErrorVars({});
+        setError(err.message);
       } else {
-        setError(err instanceof Error ? err.message : 'Failed to connect to workspace');
+        failWith('modal.fabric.connectFailed');
       }
     } finally {
       setLoading(false);
@@ -62,7 +85,7 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
 
   const handlePush = useCallback(async () => {
     setStep('pushing');
-    setError('');
+    clearError();
 
     try {
       if (mode === 'create') {
@@ -85,9 +108,13 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
       setStep('done');
     } catch (err) {
       if (err instanceof FabricApiError) {
-        setError(`API error (${err.status}): ${err.message}`);
+        failWith('modal.fabric.apiError', { status: err.status, message: err.message });
+      } else if (err instanceof Error) {
+        setErrorKey(null);
+        setErrorVars({});
+        setError(err.message);
       } else {
-        setError(err instanceof Error ? err.message : 'Push failed');
+        failWith('modal.fabric.pushFailed');
       }
       setStep('error');
     }
@@ -121,9 +148,9 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
               <Cloud size={20} color="var(--ms-blue)" />
             </div>
             <div>
-              <h2 style={{ fontSize: 20, fontWeight: 600 }}>Push to Microsoft Fabric</h2>
+              <h2 style={{ fontSize: 20, fontWeight: 600 }}>{t('modal.fabric.push')}</h2>
               <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>
-                Create or update an ontology in your Fabric workspace
+                {t('modal.fabric.subtitle')}
               </p>
             </div>
           </div>
@@ -140,7 +167,10 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
         }}>
           <strong>{currentOntology.name}</strong>
           <span style={{ color: 'var(--text-secondary)', marginLeft: 8 }}>
-            {currentOntology.entityTypes.length} entity types, {currentOntology.relationships.length} relationships
+            {t('common.ontologyCounts', {
+              entityTypes: currentOntology.entityTypes.length,
+              relationships: currentOntology.relationships.length,
+            })}
           </span>
         </div>
 
@@ -155,7 +185,7 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
             color: '#D13438', fontSize: 13,
           }}>
             <AlertCircle size={16} style={{ flexShrink: 0, marginTop: 2 }} />
-            <span>{error}</span>
+            <span>{errorKey ? t(errorKey, errorVars) : error}</span>
           </div>
         )}
 
@@ -164,7 +194,7 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
           <div>
             <div style={{ marginBottom: 16 }}>
               <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
-                Workspace ID
+                {t('modal.fabric.workspaceId')}
               </label>
               <input
                 type="text"
@@ -183,19 +213,19 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
                 }}
               />
               <p style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 4 }}>
-                Find this in Fabric portal → Workspace settings → Overview
+                {t('modal.fabric.workspaceIdHint')}
               </p>
             </div>
 
             <div style={{ marginBottom: 20 }}>
               <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
-                Access Token
+                {t('modal.fabric.accessToken')}
               </label>
               <input
                 type="password"
                 value={token}
                 onChange={(e) => setToken(e.target.value)}
-                placeholder="Paste your bearer token here"
+                placeholder={t('modal.fabric.tokenPlaceholder')}
                 spellCheck={false}
                 style={{
                   width: '100%', padding: '8px 12px',
@@ -208,8 +238,7 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
                 }}
               />
               <p style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 4 }}>
-                Bearer token with <code>Item.ReadWrite.All</code> scope.
-                Get one from the Fabric REST API &quot;Try It&quot; page or via MSAL.
+                {t('modal.fabric.tokenHintPrefix')}<code>Item.ReadWrite.All</code>{t('modal.fabric.tokenHintSuffix')}
               </p>
             </div>
 
@@ -219,7 +248,7 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
               disabled={loading}
               style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
             >
-              {loading ? <><Loader2 size={14} className="spin" /> Connecting...</> : 'Connect to Workspace'}
+              {loading ? <><Loader2 size={14} className="spin" /> {t('modal.fabric.connecting')}</> : t('modal.fabric.connect')}
             </button>
           </div>
         )}
@@ -229,7 +258,7 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
           <div>
             <div style={{ marginBottom: 16 }}>
               <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
-                Action
+                {t('modal.fabric.action')}
               </label>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
@@ -243,7 +272,7 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
                     cursor: 'pointer', fontSize: 13, fontWeight: 600,
                   }}
                 >
-                  Create New
+                  {t('modal.fabric.createMode')}
                 </button>
                 <button
                   onClick={() => setMode('update')}
@@ -258,7 +287,7 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
                     fontSize: 13, fontWeight: 600,
                   }}
                 >
-                  Update Existing ({existingOntologies.length})
+                  {t('modal.fabric.updateMode', { count: existingOntologies.length })}
                 </button>
               </div>
             </div>
@@ -266,7 +295,7 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
             {mode === 'update' && existingOntologies.length > 0 && (
               <div style={{ marginBottom: 16 }}>
                 <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
-                  Select Ontology
+                  {t('modal.fabric.selectOntology')}
                 </label>
                 <select
                   value={selectedOntologyId}
@@ -280,7 +309,7 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
                     fontSize: 13,
                   }}
                 >
-                  <option value="">— Select —</option>
+                  <option value="">{t('modal.fabric.selectPlaceholder')}</option>
                   {existingOntologies.map(o => (
                     <option key={o.id} value={o.id}>
                       {o.displayName} ({o.id.slice(0, 8)}…)
@@ -293,10 +322,10 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
             <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
               <button
                 className="btn btn-secondary"
-                onClick={() => { setStep('credentials'); setError(''); }}
+                onClick={() => { setStep('credentials'); clearError(); }}
                 style={{ flex: 1 }}
               >
-                Back
+                {t('common.back')}
               </button>
               <button
                 className="btn btn-primary"
@@ -304,7 +333,7 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
                 disabled={mode === 'update' && !selectedOntologyId}
                 style={{ flex: 2 }}
               >
-                {mode === 'create' ? 'Create & Push' : 'Update Definition'}
+                {mode === 'create' ? t('modal.fabric.createAndPush') : t('modal.fabric.updateDefinition')}
               </button>
             </div>
           </div>
@@ -315,10 +344,10 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
           <div style={{ textAlign: 'center', padding: '32px 0' }}>
             <Loader2 size={32} color="var(--ms-blue)" style={{ animation: 'spin 1s linear infinite' }} />
             <p style={{ marginTop: 16, fontSize: 14, color: 'var(--text-secondary)' }}>
-              {mode === 'create' ? 'Creating ontology in Fabric...' : 'Updating ontology definition...'}
+              {mode === 'create' ? t('modal.fabric.creating') : t('modal.fabric.updating')}
             </p>
             <p style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 4 }}>
-              This may take a moment while Fabric provisions the resource.
+              {t('modal.fabric.provisioningHint')}
             </p>
 
             <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
@@ -330,7 +359,7 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
           <div style={{ textAlign: 'center', padding: '24px 0' }}>
             <CheckCircle size={40} color="var(--ms-green)" />
             <p style={{ marginTop: 12, fontSize: 16, fontWeight: 600 }}>
-              {mode === 'create' ? 'Ontology Created!' : 'Definition Updated!'}
+              {mode === 'create' ? t('modal.fabric.created') : t('modal.fabric.updated')}
             </p>
             {result && (
               <div style={{
@@ -339,9 +368,9 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
                 borderRadius: 'var(--radius-md)',
                 fontSize: 13, textAlign: 'left',
               }}>
-                <div><strong>Name:</strong> {result.displayName}</div>
-                <div><strong>ID:</strong> <code style={{ fontSize: 11 }}>{result.id}</code></div>
-                <div><strong>Workspace:</strong> <code style={{ fontSize: 11 }}>{result.workspaceId}</code></div>
+                <div><strong>{t('modal.fabric.resultName')}</strong> {result.displayName}</div>
+                <div><strong>{t('modal.fabric.resultId')}</strong> <code style={{ fontSize: 11 }}>{result.id}</code></div>
+                <div><strong>{t('modal.fabric.resultWorkspace')}</strong> <code style={{ fontSize: 11 }}>{result.workspaceId}</code></div>
               </div>
             )}
             <button
@@ -349,7 +378,7 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
               onClick={onClose}
               style={{ marginTop: 20 }}
             >
-              Done
+              {t('common.done')}
             </button>
           </div>
         )}
@@ -359,19 +388,19 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
           <div style={{ textAlign: 'center', padding: '24px 0' }}>
             <AlertCircle size={40} color="#D13438" />
             <p style={{ marginTop: 12, fontSize: 14, color: '#D13438' }}>
-              Push failed. Check the error above and try again.
+              {t('modal.fabric.pushFailedHint')}
             </p>
             <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 20 }}>
               <button
                 className="btn btn-secondary"
-                onClick={() => { setStep('credentials'); setError(''); }}
+                onClick={() => { setStep('credentials'); clearError(); }}
                 style={{ display: 'flex', alignItems: 'center', gap: 6 }}
               >
                 <RefreshCw size={14} />
-                Start Over
+                {t('modal.fabric.startOver')}
               </button>
               <button className="btn btn-primary" onClick={onClose}>
-                Close
+                {t('common.close')}
               </button>
             </div>
           </div>

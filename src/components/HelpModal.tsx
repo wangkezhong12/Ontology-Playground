@@ -7,16 +7,18 @@ interface HelpModalProps {
   onClose: () => void;
 }
 
-// Render a translated paragraph that may carry **strong** markers
-// (same convention as QueryPlayground's query results).
+// Render a translated paragraph that may carry **strong** or _emphasis_
+// markers (same convention as QueryPlayground's query results).
 function renderRich(text: string) {
-  return parseInlineEmphasis(text).map((segment, index) =>
-    segment.kind === 'strong' ? (
-      <strong key={index}>{segment.text}</strong>
-    ) : (
-      <span key={index}>{segment.text}</span>
-    )
-  );
+  return parseInlineEmphasis(text).map((segment, index) => {
+    if (segment.kind === 'strong') {
+      return <strong key={index}>{segment.text}</strong>;
+    }
+    if (segment.kind === 'emphasis') {
+      return <em key={index}>{segment.text}</em>;
+    }
+    return <span key={index}>{segment.text}</span>;
+  });
 }
 
 export function HelpModal({ onClose }: HelpModalProps) {
@@ -72,7 +74,7 @@ export function HelpModal({ onClose }: HelpModalProps) {
               <span className="feature-title" style={{ marginBottom: 0 }}>{t('modal.help.askQuestions.title')}</span>
             </div>
             <p className="feature-text">
-              {t('modal.help.askQuestions.text')}
+              {renderRich(t('modal.help.askQuestions.text'))}
             </p>
           </div>
 
@@ -82,7 +84,7 @@ export function HelpModal({ onClose }: HelpModalProps) {
               <span className="feature-title" style={{ marginBottom: 0 }}>{t('modal.help.viewDataBindings.title')}</span>
             </div>
             <p className="feature-text">
-              {t('modal.help.viewDataBindings.text')}
+              {renderRich(t('modal.help.viewDataBindings.text'))}
             </p>
           </div>
 
@@ -98,7 +100,7 @@ export function HelpModal({ onClose }: HelpModalProps) {
             <div>
               <strong style={{ color: 'var(--ms-blue)' }}>{t('modal.help.aboutOntology.title')}</strong>
               <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4, lineHeight: 1.5 }}>
-                {t('modal.help.aboutOntology.text')}
+                {renderRich(t('modal.help.aboutOntology.text'))}
               </p>
             </div>
           </div>

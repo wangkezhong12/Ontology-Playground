@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Layers, ArrowRight, Search, Code, User, Pencil, Share2 } from 'lucide-react';
 import { useDesignerStore } from '../store/designerStore';
 import { useAppStore } from '../store/appStore';
+import { useI18n } from '../i18n';
 import { serializeToRDF } from '../lib/rdf/serializer';
 import { highlightRdf, RDF_HIGHLIGHT_DARK, RDF_HIGHLIGHT_LIGHT } from '../lib/rdf/highlighter';
 import { navigate, parseHash } from '../lib/router';
@@ -18,10 +19,14 @@ type SourceFilter = 'all' | 'official' | 'community' | 'external';
 
 export function GalleryModal({ onClose }: GalleryModalProps) {
   const { currentOntology, loadOntology } = useAppStore();
+  const { t } = useI18n();
 
   const [catalogue, setCatalogue] = useState<CatalogueEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  // errorStatus holds the HTTP status for the localized load-failure message;
+  // error holds raw pass-through text (e.g. network errors). Both are null on success.
   const [error, setError] = useState<string | null>(null);
+  const [errorStatus, setErrorStatus] = useState<number | null>(null);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [sourceFilter, setSourceFilter] = useState<SourceFilter>('all');
@@ -48,15 +53,20 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}catalogue.json`)
       .then((res) => {
-        if (!res.ok) throw new Error(`Failed to load catalogue (${res.status})`);
+        if (!res.ok) {
+          setErrorStatus(res.status);
+          setLoading(false);
+          return null;
+        }
         return res.json() as Promise<Catalogue>;
       })
       .then((data) => {
+        if (!data) return;
         setCatalogue(data.entries);
         setLoading(false);
       })
       .catch((err) => {
-        setError(err.message);
+        setError(err instanceof Error ? err.message : String(err));
         setLoading(false);
       });
   }, []);
@@ -145,9 +155,9 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <div>
-            <h2 style={{ fontSize: 24, fontWeight: 600 }}>Ontology Gallery</h2>
+            <h2 style={{ fontSize: 24, fontWeight: 600 }}>{t('modal.gallery.title')}</h2>
             <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
-              Browse and load ontologies from the catalogue
+              {t('modal.gallery.subtitle')}
             </p>
           </div>
           <button className="icon-btn" onClick={onClose}>
@@ -161,7 +171,7 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
             <Search size={16} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
             <input
               type="text"
-              placeholder="Search by name, tag, author…"
+              placeholder={t('modal.gallery.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
@@ -195,10 +205,10 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
               fontSize: 13,
             }}
           >
-            <option value="all">All sources</option>
-            <option value="official">Official</option>
-            <option value="external">External</option>
-            <option value="community">Community</option>
+            <option value="all">{t('modal.gallery.allSources')}</option>
+            <option value="official">{t('modal.gallery.sourceOfficial')}</option>
+            <option value="external">{t('modal.gallery.sourceExternal')}</option>
+            <option value="community">{t('modal.gallery.sourceCommunity')}</option>
           </select>
           <select
             value={categoryFilter}
@@ -220,7 +230,7 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
               fontSize: 13,
             }}
           >
-            <option value="all">All categories</option>
+            <option value="all">{t('modal.gallery.allCategories')}</option>
             {categories.map((cat) => (
               <option key={cat} value={cat}>
                 {CATEGORY_LABELS[cat] ?? cat}
@@ -232,7 +242,12 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
         {/* Loading / Error / Empty */}
         {loading && (
           <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-secondary)' }}>
-            Loading catalogue…
+            {t('modal.gallery.loading')}
+          </div>
+        )}
+        {errorStatus !== null && (
+          <div style={{ textAlign: 'center', padding: 40, color: 'var(--ms-red, #D13438)' }}>
+            {t('modal.gallery.loadError', { status: errorStatus })}
           </div>
         )}
         {error && (
@@ -240,21 +255,23 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
             {error}
           </div>
         )}
-        {!loading && !error && filtered.length === 0 && (
+        {!loading && !error && errorStatus === null && filtered.length === 0 && (
           <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-secondary)' }}>
-            No ontologies match your filters.
+            {t('modal.gallery.empty')}
           </div>
         )}
 
         {/* Result count */}
-        {!loading && !error && filtered.length > 0 && (
+        {!loading && !error && errorStatus === null && filtered.length > 0 && (
           <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginBottom: 8 }}>
-            Showing {Math.min(visibleCount, filtered.length)} of {filtered.length} ontolog{filtered.length === 1 ? 'y' : 'ies'}
+            {filtered.length === 1
+              ? t('modal.gallery.showingOne', { visible: Math.min(visibleCount, filtered.length), total: filtered.length })
+              : t('modal.gallery.showingMany', { visible: Math.min(visibleCount, filtered.length), total: filtered.length })}
           </div>
         )}
 
         {/* Gallery Grid */}
-        {!loading && !error && (
+        {!loading && !error && errorStatus === null && (
           <>
           <div className="gallery-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(340px, 100%), 1fr))', gap: 16 }}>
             {visibleEntries.map((entry) => {
@@ -322,7 +339,7 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
                                 fontWeight: 500,
                               }}
                             >
-                              Community
+                              {t('modal.gallery.sourceCommunity')}
                             </span>
                           )}
                           {entry.source === 'external' && (
@@ -336,7 +353,7 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
                                 fontWeight: 500,
                               }}
                             >
-                              External
+                              {t('modal.gallery.sourceExternal')}
                             </span>
                           )}
                         </div>
@@ -353,7 +370,7 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
                           fontWeight: 600,
                         }}
                       >
-                        Active
+                        {t('modal.gallery.active')}
                       </div>
                     )}
                   </div>
@@ -404,13 +421,13 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <Layers size={14} color="var(--text-tertiary)" />
                         <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-                          {entry.ontology.entityTypes.length} entities
+                          {t('stats.entitiesCount', { count: entry.ontology.entityTypes.length })}
                         </span>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <ArrowRight size={14} color="var(--text-tertiary)" />
                         <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-                          {entry.ontology.relationships.length} relationships
+                          {t('stats.relationshipsCount', { count: entry.ontology.relationships.length })}
                         </span>
                       </div>
                     </div>
@@ -419,7 +436,7 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
                       <button
                         className="btn btn-secondary"
                         style={{ padding: '5px 8px', fontSize: 11 }}
-                        title="View RDF source"
+                        title={t('modal.gallery.viewRdf')}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleViewRdf(entry);
@@ -430,7 +447,7 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
                       <button
                         className="btn btn-secondary"
                         style={{ padding: '5px 8px', fontSize: 11 }}
-                        title={copiedEmbedId === entry.id ? 'Copied!' : 'Copy embed code'}
+                        title={copiedEmbedId === entry.id ? t('common.copied') : t('modal.gallery.copyEmbed')}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleCopyEmbed(entry);
@@ -441,7 +458,7 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
                       <button
                         className="btn btn-secondary"
                         style={{ padding: '5px 8px', fontSize: 11 }}
-                        title="Edit in Designer"
+                        title={t('modal.gallery.editInDesigner')}
                         onClick={(e) => {
                           e.stopPropagation();
                           // Load into both stores: playground (appStore) and designer
@@ -464,7 +481,7 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
                             handleLoadOntology(entry);
                           }}
                         >
-                          Load
+                          {t('modal.gallery.load')}
                         </button>
                       )}
                     </div>
@@ -496,7 +513,7 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
                 style={{ padding: '8px 24px', fontSize: 13 }}
                 onClick={handleShowMore}
               >
-                Show more ({filtered.length - visibleCount} remaining)
+                {t('modal.gallery.showMore', { count: filtered.length - visibleCount })}
               </button>
             </div>
           )}
@@ -514,7 +531,7 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
           }}
         >
           <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-            Want to contribute? See{' '}
+            {t('modal.gallery.contributePrefix')}
             <a
               href="https://github.com/microsoft/Ontology-Playground/blob/main/CONTRIBUTING.md"
               target="_blank"
@@ -527,7 +544,7 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
             >
               <strong>CONTRIBUTING.md</strong>
             </a>
-            {' '}— add your ontology as an RDF file and{' '}
+            {t('modal.gallery.contributeMiddle')}
             <a
               href="https://github.com/microsoft/Ontology-Playground/fork"
               target="_blank"
@@ -538,15 +555,15 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
                 cursor: 'pointer',
               }}
             >
-              open a PR
+              {t('modal.gallery.contributePr')}
             </a>
-            .
+            {t('modal.gallery.contributeSuffix')}
           </p>
         </div>
 
         <div style={{ marginTop: 20, textAlign: 'center' }}>
           <button className="btn btn-primary" onClick={onClose}>
-            Done
+            {t('common.done')}
           </button>
         </div>
       </motion.div>
