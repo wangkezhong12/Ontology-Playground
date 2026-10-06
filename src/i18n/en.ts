@@ -91,7 +91,7 @@ export const en = {
   // palette chrome (command labels come from App.tsx and arrive pre-localized)
   'palette.placeholder': 'Type a command…',
   'palette.empty': 'No matching commands',
-  'palette.footerToOpen': 'to open',
+  'palette.footerToOpen': '⌘K to open',
   'palette.footerNavigate': '↑↓ navigate',
   'palette.footerSelect': '↵ select',
 
@@ -309,7 +309,7 @@ export const en = {
   'tour.step5.title': 'Ontology Designer',
   'tour.step5.body':
     'Build your own ontologies from scratch or start from a template. Export as RDF or submit to the community catalogue.',
-  'tour.stepOf': 'Step {n} of {total}',
+  'tour.stepOf': '{n}/{total}',
   'tour.closeLabel': 'Close tour',
   'tour.back': 'Back',
   'tour.finish': 'Get started!',

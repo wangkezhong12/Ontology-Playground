@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Search, Command
+  Search
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useI18n } from '../i18n';
@@ -134,7 +134,7 @@ export function CommandPalette({ open, onClose, commands }: CommandPaletteProps)
           ))}
         </div>
         <div className="command-palette-footer">
-          <span><Command size={12} /> <span>K</span> {t('palette.footerToOpen')}</span>
+          <span>{t('palette.footerToOpen')}</span>
           <span>{t('palette.footerNavigate')}</span>
           <span>{t('palette.footerSelect')}</span>
         </div>

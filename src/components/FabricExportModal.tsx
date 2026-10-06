@@ -175,7 +175,7 @@ export function FabricExportModal({ onClose }: FabricExportModalProps) {
         </div>
 
         {/* Error display */}
-        {error && (
+        {(error || errorKey) && (
           <div style={{
             padding: 12,
             background: 'rgba(209, 52, 56, 0.15)',

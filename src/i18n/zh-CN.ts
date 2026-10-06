@@ -92,7 +92,7 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   // palette chrome（命令标签由 App.tsx 传入，已完成本地化）
   'palette.placeholder': '输入命令…',
   'palette.empty': '没有匹配的命令',
-  'palette.footerToOpen': '打开',
+  'palette.footerToOpen': '按 ⌘K 打开',
   'palette.footerNavigate': '↑↓ 导航',
   'palette.footerSelect': '↵ 选择',
 
@@ -266,7 +266,7 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   // 本体目录模态框（目录名称、标签、作者为数据内容，保持原样）
   'modal.gallery.title': '本体目录',
   'modal.gallery.subtitle': '浏览并加载目录中的本体',
-  'modal.gallery.searchPlaceholder': '搜索本体…',
+  'modal.gallery.searchPlaceholder': '按名称、标签、作者搜索…',
   'modal.gallery.allSources': '所有来源',
   'modal.gallery.sourceOfficial': '官方',
   'modal.gallery.sourceExternal': '外部',
@@ -302,10 +302,10 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   'tour.step4.body': '选择一个实体，查看其属性和数据绑定。使用底部的查询栏提出自然语言问题。',
   'tour.step5.title': '本体设计器',
   'tour.step5.body': '从零开始构建您自己的本体，或从模板入手。导出为 RDF，或提交到社区目录。',
-  'tour.stepOf': '第 {n} 步，共 {total} 步',
+  'tour.stepOf': '第 {n}/{total} 步',
   'tour.closeLabel': '关闭引导',
   'tour.back': '上一步',
-  'tour.finish': '完成',
+  'tour.finish': '开始使用！',
   'tour.skip': '跳过引导 · 不再显示',
 
   // NL 构建器模态框（由 VITE_ENABLE_AI_BUILDER 门控）
