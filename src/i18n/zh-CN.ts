@@ -351,6 +351,47 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   'graph.fit': '适应视图',
   'graph.resetLayout': '重置布局',
   'graph.downloadPng': '将图形下载为 PNG',
+
+  // 学习 / 本体学院界面文案（课程、文章、测验内容来自 public/learn.json，
+  // 保持英文——规范非目标）
+  'learn.loadError': '加载学习内容失败：{message}',
+  'learn.backTo': '返回{target}',
+  'learn.allCourses': '全部课程',
+  'learn.playground': 'Playground', // 品牌名，保留原文
+  'learn.toggleTheme': '切换主题',
+  'learn.hero':
+    '学习路径与动手实验，帮助你理解本体并为 Microsoft Fabric IQ 构建本体。',
+  'learn.typeLab': '实验',
+  'learn.typePath': '路径',
+  'learn.typeLearningPath': '学习路径',
+  'learn.stepsCount': '{count} 个步骤',
+  'learn.articlesCount': '{count} 篇文章',
+  'learn.startLab': '开始实验',
+  'learn.startLearning': '开始学习',
+  'learn.overview': '概述',
+  'learn.stepN': '第 {n} 步',
+  'learn.underReview': '🔍 人工审核中',
+  'learn.openStep': '打开步骤',
+  'learn.readArticle': '阅读文章',
+  'learn.present': '演示',
+  'learn.presentTitle': '以幻灯片演示',
+  'learn.previous': '上一步',
+  'learn.exitPresentation': '退出（Esc）',
+  'learn.prevSlide': '上一页',
+  'learn.prevSlideTitled': '上一页：{title}',
+  'learn.nextSlide': '下一页',
+  'learn.nextSlideTitled': '下一页：{title}',
+  'learn.slideCounter': '第 {current} / {total} 页',
+  'learn.hintNext': '—— 下一篇：{title}',
+  'learn.hintPrev': '—— 上一篇：{title}',
+  'learn.quizCorrect': '回答正确！',
+  'learn.quizWrong': '不对哦',
+  'learn.embedNotFound': '在本体目录中未找到本体“{id}”',
+  'learn.embedCatalogueFailed': '加载目录失败',
+  'learn.newCount': '新增 {count} 项',
+  'learn.before': '变化前',
+  'learn.after': '变化后',
+  'learn.toggleFullscreen': '切换全屏',
 };
 
 // Data-driven keys (quests, designer templates).
