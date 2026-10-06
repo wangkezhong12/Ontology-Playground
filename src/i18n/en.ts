@@ -38,6 +38,69 @@ export const en = {
   'quest.difficulty.intermediate': 'intermediate',
   'quest.difficulty.advanced': 'advanced',
 
+  // quest generator templates (code templates, not data). en values are
+  // byte-identical to the original template-literal outputs in
+  // questGenerator.ts — pinned by questGenerator.test.ts under the global
+  // en pin. Resolved INSIDE generateQuestsForOntology at generation time.
+  // Shared fragments
+  'questGen.findIcon': 'Find the {icon} icon',
+  'questGen.toSuffix': ' to {target}',
+  'questGen.originatesFrom': 'originates from',
+  'questGen.connectsTo': 'connects to',
+  // Quest 1: Meet the Entities
+  'questGen.q1.title': 'Meet the Entities',
+  'questGen.q1.description': 'Discover the core entity types in the {name} ontology.',
+  'questGen.q1.clickEntity': 'Click on the {name} entity to learn about its properties',
+  'questGen.q1.iconInGraph': 'Look for the {icon} icon in the graph',
+  'questGen.q1.badge': 'Entity Explorer',
+  // Quest 2: Relationship Navigator
+  'questGen.q2.title': 'Relationship Navigator',
+  'questGen.q2.description': 'Trace the connections between entities in {name}.',
+  'questGen.q2.startAt': 'Start at the {name} entity',
+  'questGen.q2.followRel': "Follow the '{rel}' relationship",
+  'questGen.q2.clickLine': 'Click the line labeled "{rel}"',
+  'questGen.q2.badge': 'Connection Master',
+  // Quest 3: Find the Hub
+  'questGen.q3.title': 'Find the Hub',
+  'questGen.q3.description': 'Discover which entity is the most connected in {name}.',
+  'questGen.q3.findHub': "Find the {name} entity - it's the most connected in this ontology!",
+  'questGen.q3.connectionCount': '{name} has {count} connections',
+  'questGen.q3.exploreRel': "Explore the '{rel}' relationship",
+  'questGen.q3.hubRelHint': 'This {phrase} {name}',
+  'questGen.q3.badge': 'Hub Detective',
+  // Quest 4: Property Detective
+  'questGen.q4.title': 'Property Detective',
+  'questGen.q4.description': 'Learn about the properties that define each entity type.',
+  'questGen.q4.selectEntity': 'Select the {name} entity and examine its {count} properties',
+  'questGen.q4.inspectorHint': 'Check the Inspector panel for property details',
+  'questGen.q4.findIdentifier': "Find the identifier property '{prop}' in {name}",
+  'questGen.q4.keyIconHint': 'Look for the key icon 🔑 marking the identifier',
+  'questGen.q4.badge': 'Data Scholar',
+  // Quest 5: Query Explorer
+  'questGen.q5.title': 'Query Explorer',
+  'questGen.q5.description': 'Learn to ask questions using natural language queries.',
+  'questGen.q5.tryAsking': 'Try asking: "What is {name}?"',
+  'questGen.q5.queryHint': 'Type in the Natural Language Query playground',
+  'questGen.q5.nowAsk': 'Now ask: "How does {a} relate to {b}?"',
+  'questGen.q5.exploreRelsHint': 'Explore the relationships between entities',
+  'questGen.q5.traversalQuery': 'Try a traversal query: "How does {a} connect to {b}?"',
+  'questGen.q5.traversalAboutRel': 'Try a traversal query about the "{rel}" relationship',
+  'questGen.q5.relPathHint': 'This follows the "{rel}" relationship path',
+  'questGen.q5.badge': 'Query Wizard',
+  // Quest 6: The Full Journey
+  'questGen.q6.title': 'The Full Journey',
+  'questGen.q6.description': 'Traverse from {a} all the way to {b}.',
+  'questGen.q6.startJourney': 'Start your journey at {name}',
+  'questGen.q6.followToReach': "Follow '{rel}' to reach {name}",
+  'questGen.q6.clickEdge': 'Click the connecting edge',
+  'questGen.q6.exploreEntity': 'Explore the {name} entity',
+  'questGen.q6.middleHint': 'This is the middle of your journey',
+  'questGen.q6.continueVia': "Continue via '{rel}' to reach {name}",
+  'questGen.q6.oneMoreHint': 'One more connection to go!',
+  'questGen.q6.youMadeIt': 'You made it! Explore {name}',
+  'questGen.q6.journeyCompleteHint': 'Journey complete! {icon}',
+  'questGen.q6.badge': 'Path Pioneer',
+
   // test fixtures
   'test.enOnlyFixture': 'English only fixture',
 

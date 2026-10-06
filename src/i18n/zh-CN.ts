@@ -40,6 +40,69 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   'quest.difficulty.intermediate': '中级',
   'quest.difficulty.advanced': '高级',
 
+  // 任务生成器模板（代码模板，非数据）：在 generateQuestsForOntology 内部、
+  // 生成时解析——生成语言在 loadOntology 时冻结，不随切换重新翻译。
+  // 嵌入的自然语言查询示例保持英文（NL 查询引擎仅支持英文），与静态任务
+  // quest-4 的约定一致；实体/关系名称作为变量保持 ASCII。
+  // 共用片段
+  'questGen.findIcon': '找到 {icon} 图标',
+  'questGen.toSuffix': ' 到 {target}',
+  'questGen.originatesFrom': '源自',
+  'questGen.connectsTo': '连接到',
+  // 任务 1：认识实体
+  'questGen.q1.title': '认识实体',
+  'questGen.q1.description': '探索 {name} 本体中的核心实体类型。',
+  'questGen.q1.clickEntity': '点击 {name} 实体，了解它的属性',
+  'questGen.q1.iconInGraph': '在图中找到 {icon} 图标',
+  'questGen.q1.badge': '实体探索者',
+  // 任务 2：关系导航
+  'questGen.q2.title': '关系导航',
+  'questGen.q2.description': '追踪 {name} 中实体之间的连接。',
+  'questGen.q2.startAt': '从 {name} 实体开始',
+  'questGen.q2.followRel': '沿着“{rel}”关系',
+  'questGen.q2.clickLine': '点击标有“{rel}”的连线',
+  'questGen.q2.badge': '连接大师',
+  // 任务 3：寻找枢纽
+  'questGen.q3.title': '寻找枢纽',
+  'questGen.q3.description': '找出 {name} 中连接最多的实体。',
+  'questGen.q3.findHub': '找到 {name} 实体——它是这个本体中连接最多的！',
+  'questGen.q3.connectionCount': '{name} 有 {count} 个连接',
+  'questGen.q3.exploreRel': '探索“{rel}”关系',
+  'questGen.q3.hubRelHint': '该关系{phrase} {name}',
+  'questGen.q3.badge': '枢纽侦探',
+  // 任务 4：属性侦探
+  'questGen.q4.title': '属性侦探',
+  'questGen.q4.description': '了解定义每个实体类型的属性。',
+  'questGen.q4.selectEntity': '选择 {name} 实体，查看它的 {count} 个属性',
+  'questGen.q4.inspectorHint': '在检查器面板中查看属性详情',
+  'questGen.q4.findIdentifier': '在 {name} 中找到标识符属性“{prop}”',
+  'questGen.q4.keyIconHint': '找到标记标识符的钥匙图标 🔑',
+  'questGen.q4.badge': '数据学者',
+  // 任务 5：查询探索
+  'questGen.q5.title': '查询探索',
+  'questGen.q5.description': '学习用自然语言查询来提问。',
+  'questGen.q5.tryAsking': '试试提问：“What is {name}?”',
+  'questGen.q5.queryHint': '在自然语言查询演练场中输入',
+  'questGen.q5.nowAsk': '再问问：“How does {a} relate to {b}?”',
+  'questGen.q5.exploreRelsHint': '探索实体之间的关系',
+  'questGen.q5.traversalQuery': '试一次遍历查询：“How does {a} connect to {b}?”',
+  'questGen.q5.traversalAboutRel': '试一次关于“{rel}”关系的遍历查询',
+  'questGen.q5.relPathHint': '这会沿着“{rel}”关系路径遍历',
+  'questGen.q5.badge': '查询向导',
+  // 任务 6：完整旅程
+  'questGen.q6.title': '完整旅程',
+  'questGen.q6.description': '从 {a} 一路遍历到 {b}。',
+  'questGen.q6.startJourney': '从 {name} 开始你的旅程',
+  'questGen.q6.followToReach': '沿着“{rel}”关系到达 {name}',
+  'questGen.q6.clickEdge': '点击连接线',
+  'questGen.q6.exploreEntity': '探索 {name} 实体',
+  'questGen.q6.middleHint': '这是你旅程的中间一站',
+  'questGen.q6.continueVia': '继续沿着“{rel}”关系到达 {name}',
+  'questGen.q6.oneMoreHint': '还差一个连接！',
+  'questGen.q6.youMadeIt': '你做到了！探索 {name} 吧',
+  'questGen.q6.journeyCompleteHint': '旅程完成！{icon}',
+  'questGen.q6.badge': '路径先驱',
+
   // NOTE: 'test.enOnlyFixture' intentionally absent — fallback test relies on it.
 
   // header

@@ -2,6 +2,13 @@
 
 import type { Ontology } from './ontology';
 import type { Quest, QuestStep } from './quests';
+// Cycle guard: importing t() here creates appStore → questGenerator → i18n →
+// appStore. It stays benign ONLY because every t() call below sits inside
+// generateQuestsForOntology's body — the i18n store is read at call time
+// (generation time), never at module evaluation. Generated strings then
+// freeze at the language active when loadOntology ran (spec: no
+// re-translation on toggle for in-flight generated quests).
+import { t } from '../i18n';
 
 /**
  * Generates a set of quests dynamically based on the current ontology structure.
@@ -16,21 +23,21 @@ export function generateQuestsForOntology(ontology: Ontology): Quest[] {
   if (entities.length >= 2) {
     const explorationSteps: QuestStep[] = entities.slice(0, Math.min(4, entities.length)).map((entity, index) => ({
       id: `step-1-${index + 1}`,
-      instruction: `Click on the ${entity.name} entity to learn about its properties`,
+      instruction: t('questGen.q1.clickEntity', { name: entity.name }),
       targetType: 'entity' as const,
       targetId: entity.id,
-      hint: `Look for the ${entity.icon} icon in the graph`
+      hint: t('questGen.q1.iconInGraph', { icon: entity.icon })
     }));
 
     quests.push({
       id: "quest-1",
-      title: "Meet the Entities",
-      description: `Discover the core entity types in the ${ontology.name} ontology.`,
+      title: t('questGen.q1.title'),
+      description: t('questGen.q1.description', { name: ontology.name }),
       difficulty: "beginner",
       category: "exploration",
       steps: explorationSteps,
       reward: {
-        badge: "Entity Explorer",
+        badge: t('questGen.q1.badge'),
         badgeIcon: "🎖️",
         points: 100
       }
@@ -50,33 +57,35 @@ export function generateQuestsForOntology(ontology: Ontology): Quest[] {
       if (sourceEntity && !usedEntities.has(sourceEntity.id)) {
         relSteps.push({
           id: `step-2-${relSteps.length + 1}`,
-          instruction: `Start at the ${sourceEntity.name} entity`,
+          instruction: t('questGen.q2.startAt', { name: sourceEntity.name }),
           targetType: 'entity',
           targetId: sourceEntity.id,
-          hint: `Find the ${sourceEntity.icon} icon`
+          hint: t('questGen.findIcon', { icon: sourceEntity.icon })
         });
         usedEntities.add(sourceEntity.id);
       }
 
       relSteps.push({
         id: `step-2-${relSteps.length + 1}`,
-        instruction: `Follow the '${rel.name}' relationship${targetEntity ? ` to ${targetEntity.name}` : ''}`,
+        instruction:
+          t('questGen.q2.followRel', { rel: rel.name }) +
+          (targetEntity ? t('questGen.toSuffix', { target: targetEntity.name }) : ''),
         targetType: 'relationship',
         targetId: rel.id,
-        hint: `Click the line labeled "${rel.name}"`
+        hint: t('questGen.q2.clickLine', { rel: rel.name })
       });
     }
 
     if (relSteps.length >= 2) {
       quests.push({
         id: "quest-2",
-        title: "Relationship Navigator",
-        description: `Trace the connections between entities in ${ontology.name}.`,
+        title: t('questGen.q2.title'),
+        description: t('questGen.q2.description', { name: ontology.name }),
         difficulty: "intermediate",
         category: "traversal",
         steps: relSteps,
         reward: {
-          badge: "Connection Master",
+          badge: t('questGen.q2.badge'),
           badgeIcon: "🔗",
           points: 200
         }
@@ -91,7 +100,7 @@ export function generateQuestsForOntology(ontology: Ontology): Quest[] {
       r => r.from === entity.id || r.to === entity.id
     ).length;
   }
-  
+
   const sortedByConnections = entities
     .map(e => ({ entity: e, connections: connectionCount[e.id] || 0 }))
     .sort((a, b) => b.connections - a.connections);
@@ -105,32 +114,35 @@ export function generateQuestsForOntology(ontology: Ontology): Quest[] {
     const hubSteps: QuestStep[] = [
       {
         id: "step-3-1",
-        instruction: `Find the ${hub.name} entity - it's the most connected in this ontology!`,
+        instruction: t('questGen.q3.findHub', { name: hub.name }),
         targetType: 'entity',
         targetId: hub.id,
-        hint: `${hub.name} has ${connectionCount[hub.id]} connections`
+        hint: t('questGen.q3.connectionCount', { name: hub.name, count: connectionCount[hub.id] })
       }
     ];
 
     connectedRels.forEach((rel, i) => {
       hubSteps.push({
         id: `step-3-${i + 2}`,
-        instruction: `Explore the '${rel.name}' relationship`,
+        instruction: t('questGen.q3.exploreRel', { rel: rel.name }),
         targetType: 'relationship',
         targetId: rel.id,
-        hint: `This ${rel.from === hub.id ? 'originates from' : 'connects to'} ${hub.name}`
+        hint: t('questGen.q3.hubRelHint', {
+          phrase: rel.from === hub.id ? t('questGen.originatesFrom') : t('questGen.connectsTo'),
+          name: hub.name
+        })
       });
     });
 
     quests.push({
       id: "quest-3",
-      title: "Find the Hub",
-      description: `Discover which entity is the most connected in ${ontology.name}.`,
+      title: t('questGen.q3.title'),
+      description: t('questGen.q3.description', { name: ontology.name }),
       difficulty: "intermediate",
       category: "exploration",
       steps: hubSteps,
       reward: {
-        badge: "Hub Detective",
+        badge: t('questGen.q3.badge'),
         badgeIcon: "🔍",
         points: 200
       }
@@ -144,37 +156,37 @@ export function generateQuestsForOntology(ontology: Ontology): Quest[] {
 
   if (entitiesWithManyProps.length >= 1) {
     const propSteps: QuestStep[] = [];
-    
+
     for (const entity of entitiesWithManyProps) {
       propSteps.push({
         id: `step-4-${propSteps.length + 1}`,
-        instruction: `Select the ${entity.name} entity and examine its ${entity.properties.length} properties`,
+        instruction: t('questGen.q4.selectEntity', { name: entity.name, count: entity.properties.length }),
         targetType: 'entity',
         targetId: entity.id,
-        hint: `Check the Inspector panel for property details`
+        hint: t('questGen.q4.inspectorHint')
       });
 
       const identifierProp = entity.properties.find(p => p.isIdentifier);
       if (identifierProp) {
         propSteps.push({
           id: `step-4-${propSteps.length + 1}`,
-          instruction: `Find the identifier property '${identifierProp.name}' in ${entity.name}`,
+          instruction: t('questGen.q4.findIdentifier', { prop: identifierProp.name, name: entity.name }),
           targetType: 'property',
           targetId: identifierProp.name,
-          hint: `Look for the key icon 🔑 marking the identifier`
+          hint: t('questGen.q4.keyIconHint')
         });
       }
     }
 
     quests.push({
       id: "quest-4",
-      title: "Property Detective",
-      description: `Learn about the properties that define each entity type.`,
+      title: t('questGen.q4.title'),
+      description: t('questGen.q4.description'),
       difficulty: "intermediate",
       category: "exploration",
       steps: propSteps,
       reward: {
-        badge: "Data Scholar",
+        badge: t('questGen.q4.badge'),
         badgeIcon: "📊",
         points: 250
       }
@@ -186,18 +198,18 @@ export function generateQuestsForOntology(ontology: Ontology): Quest[] {
   const querySteps: QuestStep[] = [
     {
       id: "step-5-1",
-      instruction: `Try asking: "What is ${sampleEntities[0]?.name || 'an entity'}?"`,
+      instruction: t('questGen.q5.tryAsking', { name: sampleEntities[0]?.name || 'an entity' }),
       targetType: 'query',
-      hint: "Type in the Natural Language Query playground"
+      hint: t('questGen.q5.queryHint')
     }
   ];
 
   if (sampleEntities.length >= 2) {
     querySteps.push({
       id: "step-5-2",
-      instruction: `Now ask: "How does ${sampleEntities[0].name} relate to ${sampleEntities[1].name}?"`,
+      instruction: t('questGen.q5.nowAsk', { a: sampleEntities[0].name, b: sampleEntities[1].name }),
       targetType: 'query',
-      hint: "Explore the relationships between entities"
+      hint: t('questGen.q5.exploreRelsHint')
     });
   }
 
@@ -208,22 +220,22 @@ export function generateQuestsForOntology(ontology: Ontology): Quest[] {
     querySteps.push({
       id: "step-5-3",
       instruction: fromEntity && toEntity
-        ? `Try a traversal query: "How does ${fromEntity.name} connect to ${toEntity.name}?"`
-        : `Try a traversal query about the "${rel.name}" relationship`,
+        ? t('questGen.q5.traversalQuery', { a: fromEntity.name, b: toEntity.name })
+        : t('questGen.q5.traversalAboutRel', { rel: rel.name }),
       targetType: 'query',
-      hint: `This follows the "${rel.name}" relationship path`
+      hint: t('questGen.q5.relPathHint', { rel: rel.name })
     });
   }
 
   quests.push({
     id: "quest-5",
-    title: "Query Explorer",
-    description: "Learn to ask questions using natural language queries.",
+    title: t('questGen.q5.title'),
+    description: t('questGen.q5.description'),
     difficulty: "advanced",
     category: "query",
     steps: querySteps,
     reward: {
-      badge: "Query Wizard",
+      badge: t('questGen.q5.badge'),
       badgeIcon: "🧙",
       points: 300
     }
@@ -258,50 +270,50 @@ export function generateQuestsForOntology(ontology: Ontology): Quest[] {
       const chainSteps: QuestStep[] = [
         {
           id: "step-6-1",
-          instruction: `Start your journey at ${chain.entities[0].name}`,
+          instruction: t('questGen.q6.startJourney', { name: chain.entities[0].name }),
           targetType: 'entity',
           targetId: chain.entities[0].id,
-          hint: `Find the ${chain.entities[0].icon} icon`
+          hint: t('questGen.findIcon', { icon: chain.entities[0].icon })
         },
         {
           id: "step-6-2",
-          instruction: `Follow '${chain.rels[0].name}' to reach ${chain.entities[1].name}`,
+          instruction: t('questGen.q6.followToReach', { rel: chain.rels[0].name, name: chain.entities[1].name }),
           targetType: 'relationship',
           targetId: chain.rels[0].id,
-          hint: "Click the connecting edge"
+          hint: t('questGen.q6.clickEdge')
         },
         {
           id: "step-6-3",
-          instruction: `Explore the ${chain.entities[1].name} entity`,
+          instruction: t('questGen.q6.exploreEntity', { name: chain.entities[1].name }),
           targetType: 'entity',
           targetId: chain.entities[1].id,
-          hint: `This is the middle of your journey`
+          hint: t('questGen.q6.middleHint')
         },
         {
           id: "step-6-4",
-          instruction: `Continue via '${chain.rels[1].name}' to reach ${chain.entities[2].name}`,
+          instruction: t('questGen.q6.continueVia', { rel: chain.rels[1].name, name: chain.entities[2].name }),
           targetType: 'relationship',
           targetId: chain.rels[1].id,
-          hint: "One more connection to go!"
+          hint: t('questGen.q6.oneMoreHint')
         },
         {
           id: "step-6-5",
-          instruction: `You made it! Explore ${chain.entities[2].name}`,
+          instruction: t('questGen.q6.youMadeIt', { name: chain.entities[2].name }),
           targetType: 'entity',
           targetId: chain.entities[2].id,
-          hint: `Journey complete! ${chain.entities[2].icon}`
+          hint: t('questGen.q6.journeyCompleteHint', { icon: chain.entities[2].icon })
         }
       ];
 
       quests.push({
         id: "quest-6",
-        title: "The Full Journey",
-        description: `Traverse from ${chain.entities[0].name} all the way to ${chain.entities[2].name}.`,
+        title: t('questGen.q6.title'),
+        description: t('questGen.q6.description', { a: chain.entities[0].name, b: chain.entities[2].name }),
         difficulty: "advanced",
         category: "traversal",
         steps: chainSteps,
         reward: {
-          badge: "Path Pioneer",
+          badge: t('questGen.q6.badge'),
           badgeIcon: "🗺️",
           points: 350
         }
