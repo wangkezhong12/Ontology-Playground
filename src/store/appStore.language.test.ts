@@ -28,4 +28,11 @@ describe('appStore language state', () => {
     const { useAppStore: freshStore } = await import('./appStore');
     expect(freshStore.getState().language).toBe('zh-CN');
   });
+
+  it('initializes from a stored en value', async () => {
+    localStorage.setItem('language', 'en');
+    vi.resetModules();
+    const { useAppStore: freshStore } = await import('./appStore');
+    expect(freshStore.getState().language).toBe('en');
+  });
 });
