@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Plus, Trash2, ChevronDown, ChevronRight, GripVertical, Key } from 'lucide-react';
 import { useDesignerStore, ENTITY_COLORS, ENTITY_ICONS, fabricIQNameError } from '../../store/designerStore';
+import { useI18n } from '../../i18n';
 import type { Property } from '../../data/ontology';
 
 const PROPERTY_TYPES: Property['type'][] = [
@@ -20,6 +21,7 @@ export function EntityForm() {
     removeProperty,
     moveProperty,
   } = useDesignerStore();
+  const { t } = useI18n();
 
   const [expandedEntities, setExpandedEntities] = useState<Set<string>>(new Set());
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -59,14 +61,14 @@ export function EntityForm() {
   return (
     <div className="designer-entity-list">
       <div className="designer-section-header">
-        <h3>Entity Types ({ontology.entityTypes.length})</h3>
-        <button className="designer-add-btn" onClick={handleAddEntity} title="Add entity type">
-          <Plus size={14} /> Add
+        <h3>{t('designer.entityTypesCount', { count: ontology.entityTypes.length })}</h3>
+        <button className="designer-add-btn" onClick={handleAddEntity} title={t('designer.addEntityType')}>
+          <Plus size={14} /> {t('common.add')}
         </button>
       </div>
 
       {ontology.entityTypes.length === 0 && (
-        <div className="designer-empty">No entity types yet. Click "Add" to create one.</div>
+        <div className="designer-empty">{t('designer.emptyEntities')}</div>
       )}
 
       {ontology.entityTypes.map((entity) => {
@@ -87,7 +89,7 @@ export function EntityForm() {
                 toggleExpand(entity.id);
               }}
             >
-              <button className="designer-expand-btn" aria-label={isExpanded ? 'Collapse' : 'Expand'}>
+              <button className="designer-expand-btn" aria-label={isExpanded ? t('designer.collapse') : t('designer.expand')}>
                 {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
               </button>
               <span
@@ -96,12 +98,12 @@ export function EntityForm() {
               >
                 {entity.icon}
               </span>
-              <span className="designer-entity-name">{entity.name || 'Unnamed'}</span>
-              <span className="designer-entity-badge">{entity.properties.length} props</span>
+              <span className="designer-entity-name">{entity.name || t('designer.unnamed')}</span>
+              <span className="designer-entity-badge">{t('designer.propsCount', { count: entity.properties.length })}</span>
               <button
                 className="designer-delete-btn"
                 onClick={(e) => { e.stopPropagation(); removeEntity(entity.id); }}
-                title="Delete entity"
+                title={t('designer.deleteEntity')}
               >
                 <Trash2 size={14} />
               </button>
@@ -112,32 +114,32 @@ export function EntityForm() {
               <div className="designer-entity-body">
                 {/* Name */}
                 <label className="designer-field">
-                  <span>Name</span>
+                  <span>{t('designer.name')}</span>
                   <input
                     type="text"
                     value={entity.name}
                     onChange={(e) => updateEntity(entity.id, { name: e.target.value })}
-                    placeholder="Entity name"
+                    placeholder={t('designer.entityNamePlaceholder')}
                   />
-                  {entity.name && fabricIQNameError('Entity type', entity.name) && (
-                    <span className="designer-field-hint error">{fabricIQNameError('Entity type', entity.name)}</span>
+                  {entity.name && fabricIQNameError(t('designer.kind.entityType'), entity.name) && (
+                    <span className="designer-field-hint error">{fabricIQNameError(t('designer.kind.entityType'), entity.name)}</span>
                   )}
                 </label>
 
                 {/* Description */}
                 <label className="designer-field">
-                  <span>Description</span>
+                  <span>{t('designer.description')}</span>
                   <textarea
                     rows={2}
                     value={entity.description}
                     onChange={(e) => updateEntity(entity.id, { description: e.target.value })}
-                    placeholder="What does this entity represent?"
+                    placeholder={t('designer.entityDescPlaceholder')}
                   />
                 </label>
 
                 {/* Icon picker */}
                 <div className="designer-field">
-                  <span>Icon</span>
+                  <span>{t('designer.icon')}</span>
                   <div className="designer-icon-grid">
                     {ENTITY_ICONS.map((icon) => (
                       <button
@@ -153,7 +155,7 @@ export function EntityForm() {
 
                 {/* Color picker */}
                 <div className="designer-field">
-                  <span>Color</span>
+                  <span>{t('designer.color')}</span>
                   <div className="designer-color-grid">
                     {ENTITY_COLORS.map((color) => (
                       <button
@@ -161,7 +163,7 @@ export function EntityForm() {
                         className={`designer-color-btn ${entity.color === color ? 'active' : ''}`}
                         style={{ backgroundColor: color }}
                         onClick={() => updateEntity(entity.id, { color })}
-                        aria-label={`Color ${color}`}
+                        aria-label={t('designer.colorSwatch', { color })}
                       />
                     ))}
                   </div>
@@ -170,27 +172,27 @@ export function EntityForm() {
                 {/* Properties */}
                 <div className="designer-field">
                   <div className="designer-section-header">
-                    <span>Properties ({entity.properties.length})</span>
+                    <span>{t('designer.propertiesCount', { count: entity.properties.length })}</span>
                     <button
                       className="designer-add-btn small"
                       onClick={() => addProperty(entity.id)}
                     >
-                      <Plus size={12} /> Add
+                      <Plus size={12} /> {t('common.add')}
                     </button>
                   </div>
 
                   <div className="designer-property-list">
                     {entity.properties.map((prop, idx) => {
-                      const propNameErr = prop.name ? fabricIQNameError('Property', prop.name) : null;
+                      const propNameErr = prop.name ? fabricIQNameError(t('designer.kind.property'), prop.name) : null;
                       const idTypeErr = prop.isIdentifier && prop.type !== 'string' && prop.type !== 'integer'
-                        ? `Identifier must be string or integer (currently ${prop.type}).`
+                        ? t('designer.identifierTypeHint', { type: prop.type })
                         : null;
                       return (
                       <div key={idx}>
                       <div className="designer-property-row">
                         <span
                           className="designer-grip"
-                          title="Drag to reorder"
+                          title={t('designer.dragToReorder')}
                           draggable
                           onDragStart={(e) => {
                             e.dataTransfer.setData('text/plain', String(idx));
@@ -212,7 +214,7 @@ export function EntityForm() {
                           type="text"
                           value={prop.name}
                           onChange={(e) => updateProperty(entity.id, idx, { name: e.target.value })}
-                          placeholder="Property name"
+                          placeholder={t('designer.propertyNamePlaceholder')}
                         />
                         <select
                           className="designer-prop-type"
@@ -228,14 +230,14 @@ export function EntityForm() {
                         <button
                           className={`designer-id-btn ${prop.isIdentifier ? 'active' : ''} ${idTypeErr ? 'warning' : ''}`}
                           onClick={() => updateProperty(entity.id, idx, { isIdentifier: !prop.isIdentifier })}
-                          title={idTypeErr || (prop.isIdentifier ? 'Remove as identifier' : 'Mark as identifier')}
+                          title={idTypeErr || (prop.isIdentifier ? t('designer.removeIdentifier') : t('designer.markIdentifier'))}
                         >
                           <Key size={12} />
                         </button>
                         <button
                           className="designer-delete-btn small"
                           onClick={() => removeProperty(entity.id, idx)}
-                          title="Remove property"
+                          title={t('designer.removeProperty')}
                         >
                           <Trash2 size={12} />
                         </button>

@@ -7,6 +7,7 @@
  */
 import { create } from 'zustand';
 import type { Ontology, EntityType, Property, Relationship, RelationshipAttribute } from '../data/ontology';
+import { t } from '../i18n';
 
 // ─── Validation ──────────────────────────────────────────────────────────────
 
@@ -28,10 +29,10 @@ export function isValidFabricIQName(name: string): boolean {
 
 export function fabricIQNameError(kind: string, name: string): string | null {
   if (!name) return null; // empty names are caught separately
-  if (name.length > 26) return `${kind} name "${name}" exceeds 26 characters.`;
-  if (!/^[A-Za-z0-9]/.test(name)) return `${kind} name "${name}" must start with a letter or digit.`;
-  if (!/[A-Za-z0-9]$/.test(name)) return `${kind} name "${name}" must end with a letter or digit.`;
-  if (!FABRIC_IQ_NAME_RE.test(name)) return `${kind} name "${name}" may only contain letters, digits, hyphens, and underscores.`;
+  if (name.length > 26) return t('designer.validate.nameTooLong', { kind, name });
+  if (!/^[A-Za-z0-9]/.test(name)) return t('designer.validate.nameBadStart', { kind, name });
+  if (!/[A-Za-z0-9]$/.test(name)) return t('designer.validate.nameBadEnd', { kind, name });
+  if (!FABRIC_IQ_NAME_RE.test(name)) return t('designer.validate.nameBadChars', { kind, name });
   return null;
 }
 
@@ -39,7 +40,7 @@ export function validateOntology(ontology: Ontology): ValidationError[] {
   const errors: ValidationError[] = [];
 
   if (ontology.entityTypes.length === 0) {
-    errors.push({ message: 'Add at least one entity type to your ontology.' });
+    errors.push({ message: t('designer.validate.needEntity') });
   }
 
   const entityIds = new Set<string>();
@@ -48,20 +49,20 @@ export function validateOntology(ontology: Ontology): ValidationError[] {
   const propNameTypeMap = new Map<string, { type: string; entityName: string }>();
 
   for (const e of ontology.entityTypes) {
-    const label = e.name || 'Unnamed entity';
+    const label = e.name || t('designer.unnamedEntity');
     if (!e.id) {
-      errors.push({ message: `"${label}" is missing an internal ID.`, entityId: e.id });
+      errors.push({ message: t('designer.validate.missingId', { label }), entityId: e.id });
     } else if (entityIds.has(e.id)) {
-      errors.push({ message: `Two entities share the same ID "${e.id}". Rename one of them.`, entityId: e.id });
+      errors.push({ message: t('designer.validate.duplicateEntityId', { id: e.id }), entityId: e.id });
     } else {
       entityIds.add(e.id);
     }
     if (!e.name) {
-      errors.push({ message: 'One of your entities has no name. Give it a name.', entityId: e.id });
+      errors.push({ message: t('designer.validate.entityNoName'), entityId: e.id });
     }
 
     // §7.1 — Entity type name validation
-    const nameErr = fabricIQNameError('Entity type', e.name);
+    const nameErr = fabricIQNameError(t('designer.kind.entityType'), e.name);
     if (nameErr) {
       errors.push({ message: nameErr, entityId: e.id });
     }
@@ -69,7 +70,7 @@ export function validateOntology(ontology: Ontology): ValidationError[] {
     const hasIdentifier = e.properties.some((p) => p.isIdentifier);
     if (!hasIdentifier) {
       errors.push({
-        message: `"${label}" has no identifier property. Click the key icon (🔑) on one of its properties to mark it as the unique identifier.`,
+        message: t('designer.validate.noIdentifier', { label }),
         entityId: e.id,
       });
     }
@@ -78,14 +79,14 @@ export function validateOntology(ontology: Ontology): ValidationError[] {
     for (const p of e.properties) {
       if (p.isIdentifier && p.type !== 'string' && p.type !== 'integer') {
         errors.push({
-          message: `Identifier property "${p.name}" on "${label}" must be string or integer type for Fabric IQ compatibility.`,
+          message: t('designer.validate.identifierType', { name: p.name, label }),
           entityId: e.id,
         });
       }
 
       // §7.2 — Property name validation
       if (p.name) {
-        const propNameErr = fabricIQNameError('Property', p.name);
+        const propNameErr = fabricIQNameError(t('designer.kind.property'), p.name);
         if (propNameErr) {
           errors.push({ message: propNameErr, entityId: e.id });
         }
@@ -93,7 +94,13 @@ export function validateOntology(ontology: Ontology): ValidationError[] {
         const existing = propNameTypeMap.get(p.name);
         if (existing && existing.type !== p.type) {
           errors.push({
-            message: `Property "${p.name}" is defined as "${p.type}" in "${label}" but as "${existing.type}" in "${existing.entityName}". Fabric IQ requires the same type when property names match across entity types.`,
+            message: t('designer.validate.propertyTypeConflict', {
+              name: p.name,
+              type: p.type,
+              label,
+              otherType: existing.type,
+              otherEntity: existing.entityName,
+            }),
             entityId: e.id,
           });
         } else if (!existing) {
@@ -105,25 +112,25 @@ export function validateOntology(ontology: Ontology): ValidationError[] {
 
   const relIds = new Set<string>();
   for (const r of ontology.relationships) {
-    const label = r.name || 'Unnamed relationship';
+    const label = r.name || t('designer.unnamedRelationship');
     if (!r.id) {
-      errors.push({ message: `"${label}" is missing an internal ID.`, relationshipId: r.id });
+      errors.push({ message: t('designer.validate.missingId', { label }), relationshipId: r.id });
     } else if (relIds.has(r.id)) {
-      errors.push({ message: `Two relationships share the same ID "${r.id}". Rename one of them.`, relationshipId: r.id });
+      errors.push({ message: t('designer.validate.duplicateRelationshipId', { id: r.id }), relationshipId: r.id });
     } else {
       relIds.add(r.id);
     }
     if (!entityIds.has(r.from)) {
-      const fromLabel = r.from || '(none)';
+      const fromLabel = r.from || t('designer.noneRef');
       errors.push({
-        message: `"${label}" points from "${fromLabel}" which doesn't exist. Pick a valid source entity.`,
+        message: t('designer.validate.danglingFrom', { label, from: fromLabel }),
         relationshipId: r.id,
       });
     }
     if (!entityIds.has(r.to)) {
-      const toLabel = r.to || '(none)';
+      const toLabel = r.to || t('designer.noneRef');
       errors.push({
-        message: `"${label}" points to "${toLabel}" which doesn't exist. Pick a valid target entity.`,
+        message: t('designer.validate.danglingTo', { label, to: toLabel }),
         relationshipId: r.id,
       });
     }
