@@ -355,7 +355,7 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   // 学习 / 本体学院界面文案（课程、文章、测验内容来自 public/learn.json，
   // 保持英文——规范非目标）
   'learn.loadError': '加载学习内容失败：{message}',
-  'learn.backTo': '返回{target}',
+  'learn.backTo': '返回 {target}',
   'learn.allCourses': '全部课程',
   'learn.playground': 'Playground', // 品牌名，保留原文
   'learn.toggleTheme': '切换主题',
@@ -382,8 +382,8 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   'learn.nextSlide': '下一页',
   'learn.nextSlideTitled': '下一页：{title}',
   'learn.slideCounter': '第 {current} / {total} 页',
-  'learn.hintNext': '—— 下一篇：{title}',
-  'learn.hintPrev': '—— 上一篇：{title}',
+  'learn.hintNext': '——下一篇：{title}',
+  'learn.hintPrev': '——上一篇：{title}',
   'learn.quizCorrect': '回答正确！',
   'learn.quizWrong': '不对哦',
   'learn.embedNotFound': '在本体目录中未找到本体“{id}”',

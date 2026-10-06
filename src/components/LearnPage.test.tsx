@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import { act } from 'react';
 import { LearnPage } from './LearnPage';
+import { useAppStore } from '../store/appStore';
 import type { LearnManifest } from '../types/learn';
 
 const manifestFixture: LearnManifest = {
@@ -76,5 +78,50 @@ describe('LearnPage course ordering', () => {
 
     const titles = Array.from(container.querySelectorAll('.learn-card h2')).map((node) => node.textContent?.trim());
     expect(titles).toEqual(['Ontology Fundamentals', 'Finance Path', 'Healthcare Path']);
+  });
+});
+
+describe('LearnPage chrome localization', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    // Reset for other suites in this file — setup.ts pins the default to 'en'.
+    useAppStore.getState().setLanguage('en');
+  });
+
+  function mockManifestFetch() {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve(manifestFixture),
+    } as Response);
+  }
+
+  it('renders zh chrome when language is zh-CN', async () => {
+    mockManifestFetch();
+    useAppStore.getState().setLanguage('zh-CN');
+
+    render(<LearnPage route={{ page: 'learn', courseSlug: 'ontology-fundamentals' }} />);
+
+    // Back-button label is chrome and localizes; course titles stay English (content).
+    await waitFor(() => {
+      expect(screen.getByText('全部课程')).toBeInTheDocument();
+    });
+    expect(screen.getByText('Ontology Fundamentals')).toBeInTheDocument();
+  });
+
+  it('re-localizes chrome live when the language changes', async () => {
+    mockManifestFetch();
+
+    render(<LearnPage route={{ page: 'learn', courseSlug: 'ontology-fundamentals' }} />);
+
+    await waitFor(() => {
+      expect(screen.getByText('All courses')).toBeInTheDocument();
+    });
+
+    act(() => {
+      useAppStore.getState().setLanguage('zh-CN');
+    });
+
+    expect(screen.queryByText('All courses')).toBeNull();
+    expect(screen.getByText('全部课程')).toBeInTheDocument();
   });
 });
