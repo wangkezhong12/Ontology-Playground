@@ -7,7 +7,7 @@ import { encodeSharePayload } from '../lib/shareCodec';
 import { serializeToRDF } from '../lib/rdf/serializer';
 import { useI18n } from '../i18n';
 import type { StaticKey } from '../i18n';
-import { Palette, Check, Database, Trophy, HelpCircle, FileJson, LayoutGrid, Sparkles, FileText, Share2, PenTool, BookOpen, Menu, X, Download, Info } from 'lucide-react';
+import { Palette, Check, Database, Trophy, HelpCircle, FileJson, LayoutGrid, Sparkles, FileText, Share2, PenTool, BookOpen, Menu, X, Download, Info, Languages } from 'lucide-react';
 
 const THEME_LABEL_KEYS: Record<ThemeId, StaticKey> = {
   dark: 'header.theme.dark',
@@ -185,6 +185,9 @@ export function Header({ onAboutClick, onHelpClick, onDataSourcesClick, onImport
         <button
           className="icon-btn"
           onClick={() => setLanguage(language === 'zh-CN' ? 'en' : 'zh-CN')}
+          // Intentional divergence: data-tooltip is in the CURRENT language (what the
+          // user reads now) while aria-label is in the TARGET language — the standard
+          // i18n-toggle convention. Do not "unify" these.
           data-tooltip={language === 'zh-CN' ? '切换到 English' : '切换到中文'}
           aria-label={language === 'zh-CN' ? 'Switch to English' : '切换到中文'}
         >
@@ -268,6 +271,9 @@ export function Header({ onAboutClick, onHelpClick, onDataSourcesClick, onImport
             </button>
             <button className="mobile-menu-item" onClick={menuAction(onDataSourcesClick)}>
               <Database size={18} /> {t('header.dataSources')}
+            </button>
+            <button className="mobile-menu-item" onClick={menuAction(() => setLanguage(language === 'zh-CN' ? 'en' : 'zh-CN'))}>
+              <Languages size={18} /> {language === 'zh-CN' ? 'Switch to English' : '切换到中文'}
             </button>
             <div className="mobile-menu-themes">
               {THEME_OPTIONS.map((opt) => (

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Header } from './Header';
@@ -19,6 +19,10 @@ const props = {
 describe('Header language', () => {
   beforeEach(() => {
     useAppStore.getState().setLanguage('zh-CN');
+  });
+
+  afterEach(() => {
+    useAppStore.getState().setLanguage('en');
   });
 
   it('renders Chinese labels in zh-CN', () => {
