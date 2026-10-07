@@ -125,6 +125,14 @@ Client-side hash routing with shareable URLs for every page:
 | `/#/learn/<course>` | Course detail — article list |
 | `/#/learn/<course>/<article>` | Article view (with presentation mode) |
 
+### Language / 语言
+
+Simplified Chinese (zh-CN) is the default UI language, with a `中 / EN` toggle
+in the Header (and the mobile menu) for English. The choice persists in
+`localStorage['language']` and covers the whole app — UI strings, quests,
+generated quests, designer templates, and the embed widget included. See
+[Language](#language) for details.
+
 ## Official Ontologies
 
 | Domain | Ontology | Entities | Relationships |
@@ -173,6 +181,24 @@ type-checks, bundles the app, and builds the embed widget. Output is in
 ```bash
 npm test            # single run
 npm run test:watch  # watch mode
+```
+
+### Language
+
+The app defaults to Simplified Chinese (中文， zh-CN). Switch with the `中 / EN`
+toggle in the Header (desktop) or the mobile menu; the choice is persisted to
+`localStorage['language']` and restored on load.
+
+Localized: UI strings, built-in and generated quests, designer templates, and
+the embed widget. Deliberately English: catalogue and Ontology School content,
+ontology entity/property names (domain identifiers), and error messages thrown
+by `src/lib/*`.
+
+Embed hosts that prefer English can set the preference before loading
+`ontology-embed.js`:
+
+```js
+localStorage.setItem('language', 'en');
 ```
 
 ## Deployment
