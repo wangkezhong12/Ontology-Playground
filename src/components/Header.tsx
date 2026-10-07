@@ -164,7 +164,7 @@ export function Header({ onAboutClick, onHelpClick, onDataSourcesClick, onImport
         <button className="icon-btn" onClick={onGalleryClick} data-tooltip={t('header.catalogue')} aria-label={t('header.catalogue')}>
           <LayoutGrid size={20} />
         </button>
-        <button className="icon-btn" onClick={onDesignerClick} data-tooltip={t('header.designer')} aria-label={t('header.designer')}>
+        <button className="icon-btn" onClick={onDesignerClick} data-tooltip={t('header.designer')} aria-label={t('header.designer')} data-tour-target="designer">
           <PenTool size={20} />
         </button>
         <button className="icon-btn" onClick={onLearnClick} data-tooltip={t('header.school')} aria-label={t('header.school')}>

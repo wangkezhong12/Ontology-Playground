@@ -37,7 +37,7 @@ const tourSteps: TourStep[] = [
     placement: 'left',
   },
   {
-    target: '.header-actions [data-tooltip="Designer"]',
+    target: '.header-actions [data-tour-target="designer"]',
     titleKey: 'tour.step5.title',
     bodyKey: 'tour.step5.body',
     placement: 'bottom',
