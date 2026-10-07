@@ -45,6 +45,10 @@ describe('useI18n()', () => {
   it('exposes t, language, setLanguage', () => {
     let hook: ReturnType<typeof useI18n> | undefined;
     const Probe = () => {
+      // Probe pattern: capture the hook value by assignment during render — the
+      // simplest way to assert useI18n's return shape without @testing-library/react
+      // renderHook helpers. Suppressed deliberately.
+      // eslint-disable-next-line react-hooks/globals
       hook = useI18n();
       return null;
     };
