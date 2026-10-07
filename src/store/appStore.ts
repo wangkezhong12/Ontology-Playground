@@ -4,6 +4,7 @@ import { quests as defaultQuests } from '../data/quests';
 import type { Ontology, DataBinding } from '../data/ontology';
 import { cosmicCoffeeOntology, sampleBindings } from '../data/ontology';
 import { generateQuestsForOntology } from '../data/questGenerator';
+import { t } from '../i18n';
 
 export type ThemeId = 'dark' | 'light' | 'aurora' | 'crimson';
 
@@ -256,11 +257,18 @@ export const useAppStore = create<AppState>((set, get) => ({
   completeQuest: () => {
     const { activeQuest, completedQuests, earnedBadges, totalPoints } = get();
     if (activeQuest && !completedQuests.includes(activeQuest.id)) {
+      // Badges resolve at completion time and keep that language (matches the
+      // generated-quest convention: generated quests are already resolved).
+      // Reference identity is intentional — generated quests reuse ids quest-1..6.
+      const isStatic = defaultQuests.includes(activeQuest);
+      const badge = isStatic
+        ? t(`quest.${activeQuest.id}.badge`, undefined, activeQuest.reward.badge)
+        : activeQuest.reward.badge;
       set({
         completedQuests: [...completedQuests, activeQuest.id],
-        earnedBadges: [...earnedBadges, { 
-          badge: activeQuest.reward.badge, 
-          icon: activeQuest.reward.badgeIcon 
+        earnedBadges: [...earnedBadges, {
+          badge,
+          icon: activeQuest.reward.badgeIcon
         }],
         totalPoints: totalPoints + activeQuest.reward.points,
         activeQuest: null,

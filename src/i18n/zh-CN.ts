@@ -627,7 +627,7 @@ const dataZh: Record<string, string> = {
   'template.iot.label': '物联网',
   'template.iot.description': '设备、传感器与读数',
   'template.education.label': '教育',
-  'template.education.description': '学生、课程与选课',
+  'template.education.description': '学生、课程与选课记录',
 };
 
 // dataZh wins over staticZh on key collision — load-bearing in Chunk 4,
