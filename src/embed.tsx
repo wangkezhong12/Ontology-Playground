@@ -9,6 +9,10 @@
  *   data-theme="dark" | "light"                  — color theme (default: dark)
  *   data-height="500px"                          — container height
  *   data-catalogue-base-url="https://…/"         — base URL for catalogue.json
+ *
+ * UI language follows the app store default (zh-CN); there is no toggle inside
+ * the widget. Host pages wanting English set localStorage['language']='en'
+ * before loading ontology-embed.js.
  */
 import { createRoot } from 'react-dom/client';
 import { EmbedWidget } from './components/EmbedWidget';

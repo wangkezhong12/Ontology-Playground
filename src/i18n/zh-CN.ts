@@ -415,6 +415,18 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
   'graph.resetLayout': '重置布局',
   'graph.downloadPng': '将图形下载为 PNG',
 
+  // 嵌入组件界面文案（ontology-embed.js 挂载的独立查看器；语言跟随应用
+  // store 默认值，组件内不提供切换）。en 逐字节相同的字符串复用既有键，
+  // 不在 embed.* 下重复：modal.gallery.loadError、learn.embedNotFound、
+  // app.graph、stats.entitiesCount / stats.relationshipsCount、common.copied、
+  // designer.copyRdf。图中的本体数据（实体/关系名称）保持英文。
+  'embed.loading': '正在加载本体…',
+  'embed.unknownError': '未知错误',
+  'embed.fetchFailed': '获取本体失败（{status}）',
+  'embed.noSource':
+    '未指定本体来源。请使用 data-catalogue-id、data-ontology-url 或 data-ontology-inline。',
+  'embed.rdfSource': 'RDF 源码',
+
   // 学习 / 本体学院界面文案（课程、文章、测验内容来自 public/learn.json，
   // 保持英文——规范非目标）
   'learn.loadError': '加载学习内容失败：{message}',

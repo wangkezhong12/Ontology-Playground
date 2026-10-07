@@ -18,8 +18,26 @@ import { serializeToRDF } from '../lib/rdf/serializer';
 import { parseRDF } from '../lib/rdf/parser';
 import { highlightRdf, RDF_HIGHLIGHT_DARK, RDF_HIGHLIGHT_LIGHT } from '../lib/rdf/highlighter';
 import type { Catalogue } from '../types/catalogue';
+import { useI18n, type StaticKey, type Vars } from '../i18n';
 
 cytoscape.use(fcose);
+
+// Component-resident failures throw this so the catch block can localize them;
+// lib-thrown errors (RDF parser, JSON.parse) keep their raw English message.
+class LocalizedError extends Error {
+  readonly key: StaticKey;
+  readonly vars?: Vars;
+
+  constructor(key: StaticKey, vars?: Vars) {
+    super(key);
+    this.key = key;
+    this.vars = vars;
+  }
+}
+
+// Localized errors carry a dictionary key translated at render scope;
+// pass-through errors carry the raw message.
+type EmbedErrorState = { key: StaticKey; vars?: Vars } | { message: string };
 
 export interface EmbedConfig {
   catalogueId?: string;
@@ -66,12 +84,13 @@ interface SelectedItem {
 
 export function EmbedWidget({ config }: { config: EmbedConfig }) {
   const [ontology, setOntology] = useState<Ontology | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<EmbedErrorState | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>('graph');
   const [selected, setSelected] = useState<SelectedItem | null>(null);
   const [copied, setCopied] = useState(false);
 
+  const { t } = useI18n();
   const theme = THEMES[config.theme] || THEMES.dark;
 
   // ─ Load ontology ────────────────────────────────────────────────────────
@@ -93,15 +112,15 @@ export function EmbedWidget({ config }: { config: EmbedConfig }) {
             || window.location.origin + '/';
           const catalogueUrl = base.endsWith('/') ? `${base}catalogue.json` : `${base}/catalogue.json`;
           const res = await fetch(catalogueUrl);
-          if (!res.ok) throw new Error(`Failed to load catalogue (${res.status})`);
+          if (!res.ok) throw new LocalizedError('modal.gallery.loadError', { status: res.status });
           const cat = (await res.json()) as Catalogue;
           const entry = cat.entries.find((e) => e.id === config.catalogueId);
-          if (!entry) throw new Error(`Ontology "${config.catalogueId}" not found in catalogue`);
+          if (!entry) throw new LocalizedError('learn.embedNotFound', { id: config.catalogueId });
           ont = entry.ontology;
         } else if (config.ontologyUrl) {
           // Fetch from URL
           const res = await fetch(config.ontologyUrl);
-          if (!res.ok) throw new Error(`Failed to fetch ontology (${res.status})`);
+          if (!res.ok) throw new LocalizedError('embed.fetchFailed', { status: res.status });
           const text = await res.text();
           // Detect format: RDF/XML starts with < or has xml prologue
           if (text.trimStart().startsWith('<')) {
@@ -111,7 +130,7 @@ export function EmbedWidget({ config }: { config: EmbedConfig }) {
             ont = JSON.parse(text) as Ontology;
           }
         } else {
-          throw new Error('No ontology source specified. Use data-catalogue-id, data-ontology-url, or data-ontology-inline.');
+          throw new LocalizedError('embed.noSource');
         }
 
         if (!cancelled) {
@@ -120,7 +139,11 @@ export function EmbedWidget({ config }: { config: EmbedConfig }) {
         }
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : String(err));
+          setError(
+            err instanceof LocalizedError
+              ? { key: err.key, vars: err.vars }
+              : { message: err instanceof Error ? err.message : String(err) },
+          );
           setLoading(false);
         }
       }
@@ -148,7 +171,7 @@ export function EmbedWidget({ config }: { config: EmbedConfig }) {
     return (
       <div style={containerStyle}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, color: theme.textSecondary, fontSize: 14 }}>
-          Loading ontology…
+          {t('embed.loading')}
         </div>
       </div>
     );
@@ -158,7 +181,7 @@ export function EmbedWidget({ config }: { config: EmbedConfig }) {
     return (
       <div style={containerStyle}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, color: '#E81123', fontSize: 13, padding: 20, textAlign: 'center' }}>
-          {error || 'Unknown error'}
+          {error ? ('key' in error ? t(error.key, error.vars) : error.message) : t('embed.unknownError')}
         </div>
       </div>
     );
@@ -210,6 +233,7 @@ interface EmbedHeaderProps {
 }
 
 function EmbedHeader({ ontology, tab, setTab, theme, copied, onCopyRdf }: EmbedHeaderProps) {
+  const { t } = useI18n();
   const tabStyle = (active: boolean): React.CSSProperties => ({
     padding: '6px 14px',
     fontSize: 12,
@@ -230,12 +254,12 @@ function EmbedHeader({ ontology, tab, setTab, theme, copied, onCopyRdf }: EmbedH
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <span style={{ fontWeight: 600, fontSize: 14 }}>{ontology.name}</span>
         <span style={{ fontSize: 11, color: theme.textTertiary }}>
-          {ontology.entityTypes.length} entities · {ontology.relationships.length} relationships
+          {t('stats.entitiesCount', { count: ontology.entityTypes.length })} · {t('stats.relationshipsCount', { count: ontology.relationships.length })}
         </span>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-        <button style={tabStyle(tab === 'graph')} onClick={() => setTab('graph')}>Graph</button>
-        <button style={tabStyle(tab === 'rdf')} onClick={() => setTab('rdf')}>RDF Source</button>
+        <button style={tabStyle(tab === 'graph')} onClick={() => setTab('graph')}>{t('app.graph')}</button>
+        <button style={tabStyle(tab === 'rdf')} onClick={() => setTab('rdf')}>{t('embed.rdfSource')}</button>
         {tab === 'rdf' && (
           <button
             onClick={onCopyRdf}
@@ -245,7 +269,7 @@ function EmbedHeader({ ontology, tab, setTab, theme, copied, onCopyRdf }: EmbedH
               border: `1px solid ${theme.border}`, borderRadius: 4, cursor: 'pointer',
             }}
           >
-            {copied ? 'Copied!' : 'Copy RDF'}
+            {copied ? t('common.copied') : t('designer.copyRdf')}
           </button>
         )}
       </div>

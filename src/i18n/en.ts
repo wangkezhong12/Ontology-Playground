@@ -427,6 +427,19 @@ export const en = {
   'graph.resetLayout': 'Reset Layout',
   'graph.downloadPng': 'Download Graph as PNG',
 
+  // embed widget chrome (the self-contained viewer mounted by ontology-embed.js;
+  // follows the store language — no toggle inside the widget). Byte-identical
+  // strings reuse existing keys instead of duplicating embed.* copies:
+  // modal.gallery.loadError, learn.embedNotFound, app.graph,
+  // stats.entitiesCount / stats.relationshipsCount, common.copied,
+  // designer.copyRdf. Ontology data (names rendered in the graph) stays English.
+  'embed.loading': 'Loading ontology…',
+  'embed.unknownError': 'Unknown error',
+  'embed.fetchFailed': 'Failed to fetch ontology ({status})',
+  'embed.noSource':
+    'No ontology source specified. Use data-catalogue-id, data-ontology-url, or data-ontology-inline.',
+  'embed.rdfSource': 'RDF Source',
+
   // learn / ontology school chrome (course/article/quiz CONTENT comes from
   // public/learn.json and stays English — spec Non-Goal)
   'learn.loadError': 'Failed to load learning content: {message}',
