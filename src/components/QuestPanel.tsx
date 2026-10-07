@@ -16,6 +16,9 @@ const questTitle = (q: Quest): string =>
 const questDescription = (q: Quest): string =>
   isStaticQuest(q) ? t(`quest.${q.id}.description`, undefined, q.description) : q.description;
 
+const questBadge = (q: Quest): string =>
+  isStaticQuest(q) ? t(`quest.${q.id}.badge`, undefined, q.reward.badge) : q.reward.badge;
+
 export function QuestPanel() {
   const {
     availableQuests,
@@ -130,7 +133,7 @@ export function QuestPanel() {
               <p className="quest-description">{questDescription(quest)}</p>
               <div className="quest-reward">
                 <Trophy size={14} />
-                <span>{quest.reward.badgeIcon} {quest.reward.badge}</span>
+                <span>{quest.reward.badgeIcon} {questBadge(quest)}</span>
                 <span className="quest-points">{t('quest.points', { count: quest.reward.points })}</span>
               </div>
             </motion.div>

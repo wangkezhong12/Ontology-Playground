@@ -20,8 +20,12 @@ export function TemplatePicker() {
             onClick={() => loadDraft(tpl.ontology)}
           >
             <span className="template-card-icon">{tpl.icon}</span>
-            <span className="template-card-label">{tpl.label}</span>
-            <span className="template-card-desc">{tpl.description}</span>
+            <span className="template-card-label">
+              {t(`template.${tpl.id}.label`, undefined, tpl.label)}
+            </span>
+            <span className="template-card-desc">
+              {t(`template.${tpl.id}.description`, undefined, tpl.description)}
+            </span>
           </button>
         ))}
       </div>

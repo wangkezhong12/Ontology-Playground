@@ -557,10 +557,11 @@ const staticZh: Partial<Record<keyof typeof en, string>> = {
 // Data-driven keys (quests, designer templates).
 const dataZh: Record<string, string> = {
   // 静态任务（quest-1..5）：与 src/data/quests.ts 一一对应；
-  // 徽章名称等数据内容保持英文。
+  // 徽章名称与 questGen 词汇表对齐（概念匹配时复用）。
   'quest.quest-1.title': '认识实体',
   'quest.quest-1.description':
     '探索实体类型，发现 Fourth Coffee 本体的核心构建模块。',
+  'quest.quest-1.badge': '实体探索者',
   'quest.quest-1.step.step-1-1.instruction': '点击 Customer 实体，了解顾客的相关信息',
   'quest.quest-1.step.step-1-1.hint': '在图中找到 👤 图标',
   'quest.quest-1.step.step-1-2.instruction': '接下来探索 Product 实体',
@@ -570,6 +571,7 @@ const dataZh: Record<string, string> = {
 
   'quest.quest-2.title': '咖啡豆之旅',
   'quest.quest-2.description': '沿着关系追踪一颗咖啡豆从供应商到顾客的旅程。',
+  'quest.quest-2.badge': '连接大师',
   'quest.quest-2.step.step-2-1.instruction': '从 Supplier 实体开始——咖啡豆的旅程从这里开始',
   'quest.quest-2.step.step-2-1.hint': '找到 🚚 卡车图标',
   'quest.quest-2.step.step-2-2.instruction': '沿着“sourcedFrom”关系找到 Product',
@@ -583,6 +585,7 @@ const dataZh: Record<string, string> = {
 
   'quest.quest-3.title': '供应链导航',
   'quest.quest-3.description': '了解货运如何把供应商与门店连接起来。',
+  'quest.quest-3.badge': '枢纽侦探',
   'quest.quest-3.step.step-3-1.instruction': '点击 Shipment 实体',
   'quest.quest-3.step.step-3-1.hint': '找到 📦 包裹图标',
   'quest.quest-3.step.step-3-2.instruction': '探索指向 Supplier 的“sentBy”关系',
@@ -592,6 +595,7 @@ const dataZh: Record<string, string> = {
 
   'quest.quest-4.title': '查询探索',
   'quest.quest-4.description': '学习用自然语言查询来提问。',
+  'quest.quest-4.badge': '查询向导',
   'quest.quest-4.step.step-4-1.instruction':
     '试试提问：“Show me all Gold tier customers”',
   'quest.quest-4.step.step-4-1.hint': '在查询演练场中输入',
@@ -604,12 +608,26 @@ const dataZh: Record<string, string> = {
 
   'quest.quest-5.title': '数据绑定探秘',
   'quest.quest-5.description': '了解本体概念如何连接到真实的数据平台数据源。',
+  'quest.quest-5.badge': '绑定专家',
   'quest.quest-5.step.step-5-1.instruction': '选择 Customer 实体，查看它的数据绑定',
   'quest.quest-5.step.step-5-1.hint': '在检查器中找到“数据绑定”区域',
   'quest.quest-5.step.step-5-2.instruction': '查看 Customer 的属性如何映射到源数据列',
   'quest.quest-5.step.step-5-2.hint': '注意“name”如何映射到源中的“full_name”',
   'quest.quest-5.step.step-5-3.instruction': '查看 Product 实体的绑定，记下它的数据源和表名',
   'quest.quest-5.step.step-5-3.hint': '查看 Product 下方的数据绑定卡片',
+
+  // 设计器模板（designerTemplates）：仅本地化卡片标签与描述；
+  // 模板内部本体内容保持英文。
+  'template.retail.label': '零售',
+  'template.retail.description': '顾客、商品与订单',
+  'template.healthcare.label': '医疗',
+  'template.healthcare.description': '患者、医护人员与就诊记录',
+  'template.finance.label': '金融',
+  'template.finance.description': '账户、交易与参与方',
+  'template.iot.label': '物联网',
+  'template.iot.description': '设备、传感器与读数',
+  'template.education.label': '教育',
+  'template.education.description': '学生、课程与选课',
 };
 
 // dataZh wins over staticZh on key collision — load-bearing in Chunk 4,
